@@ -1,0 +1,7 @@
+#!/bin/sh 
+LOGFILE=/var/log/kupengahao/access_log
+ERRLOGFILE=/var/log/kupengahao/error_log
+RUNDIR=/home/www-bin/kupengahao/script
+
+echo $RUNDIR/freelex_server.pl
+/home/www-bin/kupengahao/script/freelex_server.pl >>$LOGFILE 2>>$ERRLOGFILE  

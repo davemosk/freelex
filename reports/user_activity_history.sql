@@ -1,0 +1,1 @@
+SELECT matapunauser, verb, to_char(date_trunc('month'::text, activitydate), 'FMMonth FMYYYY'::text) AS month, count(*) FROM activityjournal, matapunauser where activityjournal.matapunauserid = matapunauser.matapunauserid GROUP BY matapunauser, verb, date_trunc('month'::text, activitydate) ORDER BY matapunauser, verb, date_trunc('month'::text, activitydate);

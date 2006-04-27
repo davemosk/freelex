@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>[% system_name %] Freelex Search</title>
+<STYLE TYPE="text/css">
+  BODY, H1, P, TD, INPUT, SELECT, TEXTAREA { font-family: "Lucida Grande", "Lucida Sans Unicode", "Arial Unicode MS", Helvetica, Arial, sans-serif }
+  TT {font-family: "Courier CE", "Courier New", "Luxi Mono", monospace; font-size: small}
+</STYLE>
+</head>
+<body bgcolor="ffffff">
+[% INCLUDE navl2.inc %]
+<br>
+[% IF message %]
+<font color="red"><b>[% message %]</b></font>
+[% END %]
+<form action="detail" method="post">
+<table cellpadding="0" cellspacing="0" border="0"><tr><td>
+[% start_prompt %]</td><td>&nbsp;</td><td>
+   <input type="text" name="_start" size="20"><br></td></tr>
+<tr><td>[% end_prompt %]</td><td></td><td>
+   <input type="text" name="_end" size="20"><br></td></tr>
+<tr><td>[% tag_prompt %]</td><td></td><td>[% tagbox %]<br></td></tr>
+</table>
+<input type="hidden" name="_format" value="html">
+   <input type="hidden"
+ name="_func" value="print"><br><br>
+ <input type="submit" name="_detail" value="Print Detail">
+ [% IF print_allow_xref %]
+ <input type="submit" name="_xref" value="Cross Reference">
+ [% END %]
+ </form>
+<br>
+[% INCLUDE navl2.inc %]
+</body>
+</html>

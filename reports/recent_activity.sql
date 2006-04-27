@@ -1,0 +1,1 @@
+SELECT activitydate,matapunauser AS user,verb,object,description FROM activityjournal, matapunauser where activityjournal.matapunauserid=matapunauser.matapunauserid AND age('now',activitydate) < interval '72:00' ORDER BY activitydate DESC;

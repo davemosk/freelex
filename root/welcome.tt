@@ -1,0 +1,27 @@
+<html>
+<head>
+<title>[% IF system_name %][% system_name %][% END %] Freelex - Login</title>
+<STYLE TYPE="text/css">
+  BODY, H1, P, TD, INPUT, SELECT, TEXTAREA { font-family: "Lucida Grande", "Lucida Sans Unicode", "Arial Unicode MS", Helvetica, Arial, sans-serif }
+  TT {font-family: "Courier CE", "Courier New", "Luxi Mono", monospace; font-size: small}
+</STYLE>
+</head>
+<body>
+[% INCLUDE nav.inc %]
+<br>
+[% IF message %]
+<font color="red"><b>[% message %]</b></font>
+<br>
+[% END %]
+[% motd %]
+<br>
+[% loggedinas %]
+<br>
+[% entrycount %]
+<br>
+[% support %]
+<br>
+<br>
+[% INCLUDE nav.inc %]
+</body>
+</html>

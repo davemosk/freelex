@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>[% system_name %] Headword History</title>
+<STYLE TYPE="text/css">
+  BODY, H1, P, TD, INPUT, SELECT, TEXTAREA { font-family: "Lucida Grande", "Lucida Sans Unicode", "Arial Unicode MS", Helvetica, Arial, sans-serif }
+  TT {font-family: "Courier CE", "Courier New", "Luxi Mono", monospace; font-size: small}
+</STYLE>
+<script type="text/javascript" src="[% fckpath %]/fckeditor.js"></script>
+</head>
+<body bgcolor="ffffff">
+[% IF display_nav %][% INCLUDE navl2.inc %][% END %]
+<table>
+[% IF message %]<font color="red"><b>[% message %]</b></font><br>[% END %]
+<table>
+[% FOREACH zzz IN hwhistory %]
+[% FOREACH xxx IN zzz %]
+<tr><td valign="top">[% xxx.label %]</td><td>&nbsp;</td><td valign="top">[% xxx.value %]</td></tr>
+[% END %]
+<tr><td colspan="3"><hr><br></td></tr>
+[% END %]
+</table>
+<br>
+[% IF display_nav %][% INCLUDE navl2.inc %][% END %]
+</body>
+</html>

@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>[% system_name %] Freelex Print</title>
+
+</head>
+<body bgcolor="ffffff">
+[% INCLUDE navl2.inc %]
+<br>
+[% IF message %]
+<font color="red"><b>[% message %]</b></font>
+[% END %]
+[% FOREACH e = entries %]
+<table border="0" cellpadding="0" cellspacing="0" bgcolor="#eeeeee" width="100%">
+<tr><td>
+<font size="+1"><b>[% e.headword %]</b></font>
+[% IF e.variantno %]
+<font size="+1"><b><sup>[% e.variantno %]</sup></b></font>
+[% END %]
+ [<a href="../headword/display?_id=[% e.headwordid %]" target="_blank">[% e.headwordid %]</a>]
+<br>
+<font color="ff6666"><b>[% e.gloss %]</b></font><br>
+</td></tr>
+</table>
+<br>
+[% IF e.symbol %]
+<strong>Tohu:</strong><br>
+[% e.symbol %]<br>
+<br>
+[% END %]
+[% IF e.definition %]
+<strong>Takenga Mai:</strong><br>
+[% e.definition %]<br>
+<br>
+[% END %]
+[% IF e.essay %]
+<strong>Whakam&#257;rama:</strong><br>
+[% e.essay %]<br>
+[% END %]
+[% IF e.english %]
+<br>
+<font color="#666666">[% e.english %]</font><br>
+<br>
+[% END %]
+[% IF e.example %]
+<strong>Tauira K&#333;rero:</strong><br>
+[% e.example %]<br>
+<br>
+[% END %]
+[% IF e.relatedterms %]
+<strong>Wh&#257;nau Kupu:</strong><br>
+[% e.relatedterms %]<br>
+<br>
+[% END %]
+[% IF e.detailedexplanation %]
+<strong>Whakam&#257;rama Atu An&#333;:</strong><br>
+[% e.detailedexplanation %]<br>
+<br>
+[% END %]
+<hr size="1"><br>
+[% END %]
+<br>
+[% INCLUDE navl2.inc %]
+</body>
+</html>

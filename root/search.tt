@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>[% system_name %] Freelex Search</title>
+<STYLE TYPE="text/css">
+  BODY, H1, P, TD, INPUT, SELECT, TEXTAREA { font-family: "Lucida Grande", "Lucida Sans Unicode", "Arial Unicode MS", Helvetica, Arial, sans-serif }
+  TT {font-family: "Courier CE", "Courier New", "Luxi Mono", monospace; font-size: small}
+</STYLE>
+</head>
+<body bgcolor="ffffff">
+[% INCLUDE nav.inc %]
+<br>
+[% searchform %]
+<br>
+[% IF message %]<font color="red"><b>[% message %]</b></font>[% END %]
+<br><br>
+[% IF hitlist %]
+[% FOREACH hitlist %]
+<a href="headword/display?_id=[% headwordid %]">[% headword %]-[%headwordid %]
+<a href="headword/display?_id=[% headwordid %]" onClick="window.open('headword/display?_id=[% headwordid %]&_nav=no','editwin', 'toolbar=no, directories=no, location=no, status=yes, menubar=no, resizable=yes, scrollbars=yes, width=700, height=400'); return false"><img src="static/images/m1.gif" border="0" alt="open new window"></a>
+[% INCLUDE searchfields.tt %]<br><br>
+[% END %]
+[% END %] 
+<br><br>
+[% INCLUDE nav.inc %]
+</body>
+</html>

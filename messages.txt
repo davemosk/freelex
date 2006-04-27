@@ -1,0 +1,253 @@
+id	en	mi
+home	Home	Kāinga
+add_headword	Add&nbsp;Headword	Tāpiria&nbsp;he&nbsp;Kupu&nbsp;Matua
+search	Search	Rapua
+logout	Logout	E Puta
+welcome_to_matapuna	Welcome to the __1__ Freelex lexicography system	Nau mai ki __1__ / Freelex
+logged_in_as	You are logged in as __1__	Kua uru atu koe i raro i te ingoa __1__
+there_are_n_entries	There are currenty __1__ headwords in __2__ senses.<br>  __3__ entries have been created or updated so far today.	I tēnei wā __1__ ngā kupu matua, __2__ ngā aronga motuhake.<br>E __3__ ngā aronga kupu kua whakairohia, kua whakatikaina rānei i tēnei rā.
+choose_option	 	 
+for_support	For support or help, you can email __1__ on __2__ or ring __3__.	Ka kitea he tautoko, he āwhina mōu i a __1__, ī-mērahia atu i __2__, waeahia atu rānei i __3__.
+dev_system	development system	pūnaha whakahiato
+test_system	test system	pūnaha whakamātau
+save_entry	Save entry	Puritia tēnei aronga kupu
+delete_entry	Delete entry	Ūkuia tēnei aronga kupu
+clone_entry	Clone entry	Pūruatia tēnei aronga kupu
+binomial	Genus Species	Ingoa Rātini
+owned_by	Owned by __1__	Nā __1__
+created_by	Created by __1__ on __2__	I whakairohia e __1__ i te __2__
+updated_by	Updated by __1__ on __2__	I whakatikaina e __1__ i te __2__
+not_owner	You are not the owner of this word	Ehara nāu tēnei kupu
+ignore_warnings	Ignore warnings	Kaua e aro ake ki ngā whakatūpato
+edit_headword	Edit headword	Ētitahia tēnei kupu matua
+has_funny_characters	Has non-Māori characters	He pū kei roto kāore i Māori
+has_punctuation_characters	Has punctuation characters	He tohu tuhi kei roto
+has_uc_characters	Has UPPER CASE characters	He PŪ MATUA kei roto
+is_blank	Is blank	E noho wātea tonu ana
+too_few_for_binomial	Has too few words for a binomial	He iti rawa ngā kupu mō te ingoa Rātini
+program_error	Program error	Hapa hōtaka
+undefined_words	Undefined words	Ngā kupu kāore anō i whakamāoritia
+all_headwords	All headwords	Ngā kupu matua katoa
+close_window	Close window	Katia te matapihi
+search_corpus	Search&nbsp;corpus	Tirohia&nbsp;ngā&nbsp;kohinga&nbsp;kōrero
+your_search_produced_matches	Your search for __1__ produced the following __2__ match(es)	E whai ake nei ngā putanga __2__ o te kupu __1__ i kitea
+your_search_produced_no_matches	Your search for __1__ produced no matches	Kāore i kitea he kupu rite ki te __1__
+corpus_search_results	Corpus search results	Nga hua o te tirotiro kohinga kōrero
+search_corpus_for	Search the corpus for:	Tirohia ngā kohinga kōrero mō ngā kupu ka tīmata ki te:
+enter_user_details	Please enter your user details	Whakaurua ngā kōrero mōu
+username	Username	Ingoa whakauru
+password	Password	Kupu whakauru
+enter_both_username_password	Please enter both your username and your password	Whakaurua tahitia tō ingoa whakauru me tō kupu whakauru
+user_not_found	User not found – please try again.	Kāore e kitea te ingoa – kia kaha mai anō
+wrong_password	Wrong password entered for user __1__ – please try again.	Kei te hē te kupu whakauru mō te ingoa __1__ – kia kaha mai anō
+login_successful	Login successful	Kua uru pai mai koe
+no_update_access	Sorry, you can’t add / update / delete an entry because you do not have update access to the database	Kāore e taea e koe te tāpiri / te whakatika / te ūkui aronga kupu i te mea kāore ō mana raweke kōrero i Te Mātāpuna.
+data_entry_starting_over	Data entry starting over	Me tīmata anō te whakauru kōrero
+duplicate_entry_abandoned	Duplicate entry for __1__ __2__ abandoned.	Kua unua atu te pūruatanga mō te __1__ __2__
+must_enter_key	You must enter a __1__.	Me mātua whakauru he __1__
+not_saved_warnings	Entry not saved; you have warnings below	Kāore i pupurihia tēnei aronga kupu; he whakatūpato kei raro iho nei
+at_least_one_other	There is at least one other entry for __1__ __2__	Kua noho kē mai he aronga mō te __1__ __2__
+confirmation	Delete headword - confirmation	Āe, ūkuia atu tēnei kupu matua
+already_deleted	That entry has already been deleted	Kua oti kē tēnei aronga kupu te ūkui.
+modified_email_message_header	__1__ has just modified the headword __2__, which is ‘owned’ by you.  	Kua rawekehia e __1__ te kupu matua __2__ nāu nei i whakamāori.
+previous_entry_was	The previous entry was:	Anei te aronga kupu o mua:
+modified_entry_is	The modified entry is:	Anei te aronga kupu ināianei:
+modified_email_message_footer	If you have any issues with this, you might like to take it up with __1__ directly.  This is an automatic message from the Mātāpuna Dictionary Database System."	Me he whakaaro ōu ki tēnei me kōrero hāngai koe ki a __1__. He karere tēnei ka toko noa ake i te Pūnaha Putunga Kōrero o Te Mātāpuna.
+delete_not_owner	You are not allowed to delete this entry because you are not the owner.	Kāore e whakaaehia tō ūkui i tēnei aronga kupu i te mea ehara nāu.
+delete_confirm	You are about to delete the following headword: __1__	Kua tata tō ūkui atu i te kupu matua __1__.
+confirm_delete	Confirm delete	Āe, ūkuia atu
+dont_delete	Don't delete	Kao, kaua e ūkuia
+entry_deleted	Entry deleted	Kua ūkuia atu
+wordclass	Word class	Momo kupu
+search_prompt	Search terms:	Rapua ngā kupu:
+worked_on_by	that were worked on by	i mahia mai e
+time_increments	at any time /  /  /  /	/  /  /  /
+at_any_time	at any time	ahakoa te rā
+today	today	i tēnei rangi
+in_the_last_two_days	in the last 2 days	i ngā rā e rua ka taha
+in_the_last_7_days	in the last 7 days	i ngā rā e whitu ka taha
+in_the_last_30_days	in the last 30 days	i ngā rā 30 ka taha
+in_the_last_n_days	in the last __1__ days	i ngā rā e __1__ ka taha
+only_headwords	exact headword match only	exact headword match only
+partial_headwords	headwords that include search terms	headwords that include search terms
+include_other_cols	include other fields in search	include other fields in search
+see_ya_later	See ya later	Hei konā mai
+open_new_window	open new window	Huakina mai he matapihi hou
+save	save	Pupuritia
+abandon	abandon	hei aha noa iho
+synonyms	Kupu kē atu	Kupu kē atu
+headword	Headword	Kupu matua
+wordclass	Word Class	Momo kupu
+english	English explanation	English explanation
+definition	Takenga Mai	Whakamāoritanga
+example	Tauira Kōrero	Tauira
+examplesource	Example source	Putake o te Tauira
+examplesourceinfo	Example source info	Te pūtakenga mai o te tauira
+essay	Whakamārama	Whakamārama
+editorialcomment	Editorial comments	Kupu ētita
+anyone	anyone	tētahi o mātou
+add	add	tāpiria he
+edit	edit	ētitahia tēnei
+what_to_do	What do you want to do?	Me aha tēnei nā?
+successfully_added	__1__ __2__ successfully added	kua oti te __1__ __2__ te tāpiri
+successfully_updated	__1__ __2__ successfully updated	kua oti te __1__ __2__ te whakatika
+has_changed	__1__ has changed headword __2__	Kua rawekehia e __1__ te kupu matua __2__
+are_you_certain	 Are you certain you want to delete this entry?	E pīrangi tonu ana koe kia ūkuia atu?
+delete_abandoned	entry not deleted	kāore te aronga kupu i ūkuia
+reports	reports	pūrongo
+login	login	login
+cat_1000_unassigned	0 - unassigned	0 - kōwhiria tētahi
+cat_1100_weather	a - weather/clouds/rains	a - ngā tohu a Tāwhirimātea
+cat_1200_life	b - life and living things - birds, trees, insects	b - e taha koiora, ngā iti a Tāne
+cat_1300_body	c - the body - parts, functions, welfare, moko	c - te tinana, te moko
+cat_1400_people	d - people and their attributes	d - te tangata me ngā kawenga o te rā
+cat_1500_behaviour	d1 - human behaviour	d1 - te wheako tangata
+cat_1600_buildings	e - buildings and associated activities	e - te whare, te hanga whare
+cat_1700_shapes	f - shapes, measurement, positions, attributes, heap	f - ngā āhua, te ine, te āhua o te takoto
+cat_1800_clothes	g - clothes, clothed, unclothed, adornment 	g - te kākahu, te whakakākahu
+cat_1900_food	h - food and drink, vegetables 	h - te kai, te inu, te huawhenua
+cat_2000_sea	i - sea, rivers, fish, shellfish 	i - ngā wai, ngā iti a Tangaroa
+cat_2100_farming	j - farming, forestry, hunting, gathering 	j - te ahuwhenua, te mahi kai, te kohi kai
+cat_2200_places	k - places, geography, soil, land ownership 	k - te whenua, te oneone
+cat_2300_technology	l - technology, computers, weaving, carving activities 	l - te ao hangarau
+cat_2400_occupations	m - occupations	m - ngā mahi e utua ai te tangata
+cat_2500_education	n - education, schooling both traditional and modern	n - te whai i te mātauranga
+cat_2600_feelings	o - feelings, emotions, attitudes, sensations	o - ngā kare a roto, te rongo o te tinana
+cat_2700_sickness	p - sickness, illness and health	p - te tūroro, te hauora
+cat_2800_thought	q - thought and communication	q - ngā mahara, te whakapā ki ētahi atu
+cat_2900_religion	r - religion and associated rituals, spiritual world, charms	r - te taha wairua
+cat_3000_language	s - language, particles	s - te reo, ngā punga
+cat_3100_sound	t - sound, noise	t - ngā momo oro katoa
+cat_3200_substances	u - substances, objects	u - ngā momo hanga katoa
+cat_3300_adj	v - descriptive adjectives	v - he kupu āhua
+cat_3400_adjstate	v1 - describing a state	v1 - he whakamāramatanga āhua
+cat_3500_equipment	w - equipment	w - te taputapu
+cat_3600_weapons	x - weapons, war, battle	x - ngā mahi a Tūmatauenga
+cat_3700_sport	y - sport, leisure, entertainment,  games	y - te hākinakina, te whakangahau
+cat_3800_space	z - space, heavens, stars	z - te rangi me a tua atu, te whetū
+cat_3900_transport	% - transport, canoe	% - ngā momo waka katoa
+cat_4000_music	& - music, singing, chants	& - te waiata, te mōteatea
+cat_4100_time	* - time	* - te taka o te wā
+cat_4200_movement	+ - movement, travel	+ - te oraora, te haere whenua
+cat_4300_actionverbs	= - action verbs	= - ngā kupu mahi
+cat_4400_other	$ - other	$ - ētahi atu mea
+category	Strand	Strand
+context_characters	Maximum number of characters of context either side	Maximum number of characters of context either side
+max_hits	Maximum number of hits	Maximum number of hits
+limit_search_to	Limit search to	Limit search to
+no_source	No Source / Unknown	No Source / Unknown
+other_source	Other source (fill in below)	Other source (fill in below)
+other_example_source_blank	Other example source is blank	Other example source is blank
+should_be_blank_if_synonym_specified	This field should be blank if you have specified a synonym	This field should be blank if you have specified a synonym
+cant_assign_master_because_i_am_a_master	You cannot specify a master __1__ for this entry because it is itself a master __1__	You cannot specify a master __1__ for this entry because it is itself a master __1__
+cant_assign_master_because_master_is_a_slave	The master __3__ you tried to specify __1__ is a slave of __2__	The master __3__ you tried to specify, __1__ is a slave of __2__
+mastersynonymheadwordid	Master synonym	Master synonym
+mastervariantheadwordid	Master variant	Master variant
+masterderivingheadwordid	Parent deriving form	Parent deriving form
+cant_delete_has_slave_synonyms	You cannot delete this entry because it has slave synonyms __1__	You cannot delete this entry because it has slave synonyms __1__
+cant_delete_has_slave_variants	You cannot delete this entry because it has slave variants __1__	You cannot delete this entry because it has slave variants __1__
+cant_delete_has_derived_forms	You cannot delete this entry because it has derived forms __1__	You cannot delete this entry because it has derived forms __1__
+no_headword_with_id	There is no headword with id __1__	There is no heaword with id __1__
+no_entries_for_headword	There are no entries for headword __1__	There are no entries for headword __1__
+choose_one_of	Please choose one of __1__	Please choose one of __1__
+wc_noun_common	base - noun - common	tūingoa noa
+wc_noun_personal	base - noun - personal	tūingoa tangata
+wc_noun_locative_place	base - noun - locative (place)	tūwāhi
+wc_noun_locative_time	base - noun - locative (time)	tūwā
+wc_noun_pronoun	base - noun - pronoun	tūkapi
+wc_verb_transitive	base - verb - transitive	tūmahi whiti
+wc_verb_intransitive	base - verb - intransitive	tūmahi poro
+wc_verb_stative	base - verb - stative	tūmahi oti
+wc_adjective	base - adjective	tūāhua
+wc_adverb	base - adverb	tūkē
+wc_conjunction	base - conjunction	tūhono
+wc_numeral	base - numeral	tūtau
+wc_negative	base - negating word	tūwhakakāhore
+wc_unassigned	unassigned	kōwhiria tētahi
+wc_phrase	phrase - grammatical	kīanga
+wc_idiom	phrase - idiom	kīwaha
+wc_fixedexpr	phrase - fixed expression	kīpeha
+wc_particle	particle	particle
+wc_interrogative	base - interrogative	tūpātai
+wc_exclamation	base - exclamation	tūāwaiā
+wc_interjection	base - interjection	tūhau
+wc_prefix	affix - prefix	pīmua
+wc_suffix	affix - suffix	pīmuri
+wc_partaspect	particle - aspect	pūmahi
+wc_partdeterm	particle - determiner	pūmau
+wc_partprepos	particle - preposition	pūtūmua
+wc_partpostpos	particle - postposed	pūmuri
+qastatus1	QA1 (self-check)	QA1 (self check)
+qastatus2	QA2 (cultural)	QA2 (tikanga)
+qastatus3	QA3 (1st edit)	QA3 (1st edit)
+qastatus_1000_notreviewed	not yet reviewed	not yet reviewed
+qastatus_1100_deferred	deferred or pending action by owner	deferred or pending action by owner
+qastatus_1200_kill	to be deleted	to be deleted
+qastatus_1300_reject	rejected awaiting rework	rejected awaiting rework
+qastatus_1400_passed	passed	passed
+qastatus_1350_hold_2nd_edition	2nd edition	2nd edition
+wf_next_entry	Save and get next QA	Save and get next QA
+no_more_work_today	You have no more QA work	You have no more QA work
+workflow_nav	My Editing	My Editing
+words_not_in_defining_vocab	Not in defining vocab	Not in defining vocab
+history_of	History of headword __1__	Whakapapa: __1__
+history	history	whakapapa
+current	current	current
+please_select_a_report	Please select a report:	Please select a report
+generate_report	Generate report	Generate report
+recentactivity	Recent activity	Recent Activity
+report	report	report
+reports	Reports	Reports
+sense	Sense	Sense
+non_numeric	Must be a number	Must be a number
+isvariant	Variant form	Variant form
+in_category	in category	in category
+in_tag	in topic	in_topic
+any_category	any category	any category
+any_tag	any topic	any topic
+borrowedlang	Borrowed from	Borrowed from
+borrowed_notborrowed	Not Borrowed	Not Borrowed
+borrowed_english	English	English
+borrowed_french	French	French
+borrowed_german	German	German
+borrowed_latin	Latin	Latin
+secwordclass	Secondary word class	Secondary word class
+variant_must_specify_mastersyn	You must have a master synonym to specify a variant	You must have a master synonym to specify a variant
+nonbase_cant_take_secondary	You may not specify a secondary wordclass for a non-base primary	You may not specify a secondary wordclass for a non-base primary
+domain	Atua domain	Atua domain
+defining_vocab	Defining vocab	Defining vocab
+suffix1	Passive forms	Passive forms
+suffix2	Nominalising forms	Nominalising forms
+sendto	Send to	Send to
+originally_from	from	from
+usage	Usage	Usage
+usage_obscure	obscure	obscure
+make_me_master_synonym	Make me the master synonym	Make me the master synonym
+make_me_master_variant	Make me the master variant	Make me the master variant
+end_field_has_funny_characters	The end field has funny characters in it	The end field has funny characters in it
+print	Print	Print
+print_start_prompt	Starting at	Starting at
+print_end_prompt	Finishing with	Finishing with
+format	format	format
+example_has_no_source	Please specify a source for your example	Please specify a source for your example
+not_allowed_to_update_this_entry	You are not allowed to update this entry	You are not allowed to update this entry
+find_similar_words	Find similar words	Find similar words
+categoryid	Category	Category
+headwordid	ID #	ID #
+domainid	Atua domain	Atua domain
+headwordtags	Topics	Topics
+wordclassid	Part of Speech	Part of Speech
+secondarywordclass	Secondary POS	Secondary POS
+examplesourceid	Example source	Example source
+neweditorialcomment	Private notes	Private notes
+borrowedlangid	Borrowed Language	Borrowed Language
+owneruserid	Owner	Nā
+createuseranddate	Created by	I whakairohia
+updateuseranddate	Updated by	I whakatikaina
+gloss	English gloss	English gloss
+relatedterms	Whānau Kupu
+detailedexplanation	Whakamārama Atu Anō
+no_write_access	You do not have write access to the database	You do not have write access to the database.
+variantno	Sense
+enter_some_search_criteria	Please enter some search criteria	Please enter some search criteria
+symbol	Tohu	Tohu

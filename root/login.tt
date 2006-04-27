@@ -1,0 +1,14 @@
+<html>
+<head>
+<title>[% IF systemname %][% systemname %][% END %] - Login</title>
+</head>
+<body>
+<form action="login" method="POST">
+[% IF message %]<font color="red"><b>[% message %]</b></font><br>[% END %]
+<table>
+<tr><td>User name</td><td>&nbsp;</td><td><input type="text" name="username" value=""></td></tr>
+<tr><td>Password</td><td>&nbsp;</td><td><input type="password" name="password" value=""></td></tr>
+<tr><td></td><td></td><td><input type="submit" value="login"></td></tr>
+</table>
+</body>
+</html>

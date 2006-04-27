@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>[% system_name %] Freelex Search</title>
+<STYLE TYPE="text/css">
+  BODY, H1, P, TD, INPUT, SELECT, TEXTAREA { font-family: "Lucida Grande", "Lucida Sans Unicode", "Arial Unicode MS", Helvetica, Arial, sans-serif }
+  TT {font-family: "Courier CE", "Courier New", "Luxi Mono", monospace; font-size: small}
+</STYLE>
+</head>
+<body bgcolor="ffffff">
+[% INCLUDE navl2.inc %]
+[% IF message %]<font color="red"><b>[% message %]</b></font>[% END %]
+<br><br>
+<form action="delete" method="post">
+<input type="hidden" name="_id" value="[% id %]">
+[% FOREACH hitlist %]
+<b>[% headword %]-[% headwordid %]</b>
+[% INCLUDE searchfields.tt %]<br><br>
+[% END %] 
+<br>
+<input value="[% confirm %]" type="submit" name="_delconfirm">
+<input value="[% abandon %]" type="submit" name="_delabandon">
+<br>
+[% INCLUDE navl2.inc %]
+</body>
+</html>

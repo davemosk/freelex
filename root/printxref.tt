@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>[% system_name %] Freelex Print Cross Reference</title>
+
+</head>
+<body bgcolor="ffffff">
+[% INCLUDE navl2.inc %]
+<br>
+[% IF message %]
+<font color="red"><b>[% message %]</b></font>
+[% END %]
+M&#257;ori to English<br><br>
+[% FOREACH fes = forward_entries %]
+<b>[% fes.headword %]</b><br>
+[% FOREACH e = fes.entries %]
+&nbsp;&nbsp;&nbsp;[% IF e.index %][% e.index %]. [% END %][% e.gloss %] - <a href="../headword/display?_id=[% e.id %]" target="_blank">[% e.id %]</a><br>
+[% END %]
+<br>
+[% END %]
+<br>
+<br>
+English to M&#257;ori<br><br>
+[% FOREACH res = reverse_entries %]
+<b>[% res.gloss %]</b><br>
+[% FOREACH e = res.entries %]
+&nbsp;&nbsp;&nbsp;[% IF e.index %][% e.index %]. [% END %][% e.headword %] - <a href="../headword/display?_id=[% e.id %]" target="_blank">[% e.id %]</a><br>
+[% END %]
+<br>
+[% END %]
+
+[% INCLUDE navl2.inc %]
+</body>
+</html>
