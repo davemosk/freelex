@@ -66,10 +66,13 @@ sub display : Path('display') {
         $c->stash->{fields}->{$col} = entityise($h->format(trim($col),"form",$c));
         my @warnings = $h->validate($col,$c);
         $c->stash->{warnings}->{$col} = entityise(utfise((join('<br> ',@warnings))))     if @warnings;
-        $c->stash->{thispretty}->{$col} = entityise($h->format(trim($col),"plain"));
      }
   }
+
   unless ($id eq 'new') {
+     foreach my $col (@{FreelexDB::Headword->display_order_print}) {  
+        $c->stash->{thispretty}->{$col} = entityise($h->format(trim($col),"plain"));
+     }
      $c->stash->{thispretty}->{_variantno} = $h->variantno   if ((defined $h->variantno) && $h->variantno);
      $c->stash->{headword} = $h->headword;
      $c->stash->{sensestr} = makesensestr($h);
@@ -401,7 +404,6 @@ sub makeprettyarray {
       my $pretty = {};
       $lastsensestr = $thissensestr;
       $thissensestr = makesensestr($hw);
-#      print STDERR "XXXXXXXXXXXXXXXXXX " . join(" / ",$c->stash->{sensestr},$lastsensestr,$thissensestr) . "\n";
       $pretty->{'_sensestr'} = $thissensestr;
       if (!$c->stash->{thisprinted} && ($c->stash->{sensestr} ge $lastsensestr) && ($c->stash->{sensestr} lt $thissensestr)) {
          $lastvariantno = $thisvariantno;
@@ -416,7 +418,7 @@ sub makeprettyarray {
       $thisvariantno = (defined $hw->variantno && $hw->variantno) ? $hw->variantno : "";
       $pretty->{'_variantno'} = $thisvariantno;
       $pretty->{'newvariantno'} = ($thisvariantno ne $lastvariantno) ? 1 : 0;
-      foreach my $col (@{$c->stash->{display_order}}) {   
+      foreach my $col (@{FreelexDB::Headword->display_order_print}) {   
          $pretty->{$col} = entityise($hw->format($col,"plain",$c));
       }
       push @{$prettyarray}, $pretty;
