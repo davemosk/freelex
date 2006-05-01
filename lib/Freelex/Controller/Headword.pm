@@ -141,13 +141,18 @@ sub commit : Path('commit') {
 #           @other_args = ($c)
 #        }
         $c->stash->{fields}->{$col} = entityise($h->format($col,"form",$c));
-        $c->stash->{thispretty}->{$col} = entityise($h->format($col,"plain",$c));
            
         if (@warnings) {
            $c->stash->{have_warnings} = 1;
            $c->stash->{warnings}->{$col} = entityise(utfise(join('<br> ',@warnings)));
         }
      }
+     
+     foreach my $col (@{FreelexDB::Headword->display_order_print}) {
+       $c->stash->{thispretty}->{$col} = entityise($h->format($col,"plain",$c));
+     }
+     
+     
      $c->stash->{thispretty}->{_variantno} = $h->variantno   if ((defined $h->variantno) && $h->variantno);
      if ($c->stash->{have_warnings}) {
         $c->stash->{sensestr} = makesensestr($h);
