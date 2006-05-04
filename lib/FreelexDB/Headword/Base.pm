@@ -47,6 +47,7 @@ sub format {
       $val = "";
    }
      
+   my $result = "";
    
    my $format_func_type = 'format_' . $col . '_' . $formatmode . '_type';
    
@@ -57,17 +58,17 @@ sub format {
 
       my $type = eval('&'.$format_func_type);
       if ( my @tags = $type =~ /\s*\<([^\s\>]+)(?:\s|\>)/g) {
-         return entityise($type . $val) . '</' . join('></',reverse @tags) .  '>';
+         $result =  entityise($type . $val) . '</' . join('></',reverse @tags) .  '>';
       }
       
       elsif ($type eq 'textarea') {
-         return fltextarea($col,$val);
+         $result =  fltextarea($col,$val);
       }
       elsif ($type eq 'textbox') {
-         return fltextbox($col,$val);
+         $result =  fltextbox($col,$val);
       }
       elsif ($type eq 'fckeditor') {
-         return flfckeditor($col,$val)
+         $result =  flfckeditor($col,$val)
       }
       
       else { die "unknown format type $type for $format_func_type" }
@@ -78,19 +79,67 @@ sub format {
       if (defined &$format_func_name) {
          my $ffnresult = eval('&'.$format_func_name.'($self,@other_args)');
          if ($@) { croak "error in $format_func_name:" . $@ }
-         else { return $ffnresult }
+         else { $result =  $ffnresult }
 #      return $ffnresult;
       }
       elsif ($formatmode ne 'plain') {
          my $format_func_plain_name = 'format_' . $col . '_plain';
          if (defined &$format_func_plain_name) {
-            return eval('&'.$format_func_plain_name.'($self,@other_args)');
+            $result =  eval('&'.$format_func_plain_name.'($self,@other_args)');
          }
       }
-      
-      return $val;
+      else {
+         $result =  $val
+      }
    }
+   
+   return substitute_references($result, $formatmode);
 }
+
+sub substitute_references {
+   my $val = shift;
+   my $formatmode = shift || "";
+   
+   $val =~ s/\#\#.*?(\d+)\#\#/&sr_replace($1,$formatmode)/ge;
+   
+   return $val;
+}
+
+sub sr_replace {
+   my $hwid = shift;
+   my $formatmode = shift;
+   my $result = "";
+   
+   if (my $hw = FreelexDB::Headword->retrieve($hwid)) {  
+      if ($formatmode eq 'form') {
+         $result = '##' . $hw->headword . '-' . $hwid . '##'
+      }
+      elsif ($formatmode eq 'print') {
+         $result = '<!-- ref:' . $hwid . ' -->' . '<b>' . $hw->headword . '<b>' . '<!-- end ref -->';
+      }
+      else {
+         $result = '<!-- ref:' . $hwid . ' -->' . '<a href="?_id=' . $hwid . '&_nav=no" target="_blank">' . $hw->headword . '</a>' . '<!-- end ref -->';
+      }
+   }
+   else { # no headword with that ID 
+      if ($formatmode eq 'form') {
+         $result = '##' . 'ERROR no headword with id-' . $hwid . '##';
+      } 
+      else {
+         $result =  '<!-- ref:' . $hwid . ' -->' . '<font color="#ff0000">error: no headword with id <b>' . $hwid . '</b></font>' . '<!-- end ref -->';
+      }
+   }
+   return $result;   
+}
+
+sub dereference {
+   my $self = shift;
+   my $val = shift || return;
+   $val =~ s/\<\!\-\- ref\:(\d+) \-\-\>.*?\<\!\-\- end ref \-\-\>/\#\#$1\#\#/sg;
+   $val =~ s/\#\#.*?\-(\d+)\#\#/\#\#$1\#\#/sg;
+   return $val;
+}
+   
 
 sub rowtohashref {
    my $self = shift;
