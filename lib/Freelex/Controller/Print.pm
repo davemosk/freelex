@@ -31,8 +31,9 @@ sub begin : Private {
      entityise(mlmessage('format',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
      $c->stash->{print_prompt} = entityise(mlmessage('print',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
      $c->stash->{tag_prompt} = entityise(mlmessage('headwordtags',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
+     $c->stash->{category_prompt} = entityise(mlmessage('category',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
      $c->stash->{date} = localtime;
-     $c->stash->{print_allow_xref} = FreelexDB::Globals->print_allow_xref || 0;
+     $c->stash->{print_enable_xref} = FreelexDB::Globals->print_enable_xref || 0;
      
   }
 }
@@ -45,13 +46,20 @@ sub detail : Path('detail') {
   $c->stash->{message} = entityise(utfise(($c->request->params->{'_message'})))   if defined $c->request->params->{'_message'}; 
   $c->stash->{display_order} = Freelex::Model::FreelexDB::Headword->display_order_print;
   
-  if (!defined $c->request->params->{'_detail'}  && (!$c->stash->{print_allow_xref} || !defined $c->request->params->{'_xref'})) {
+  if (!defined $c->request->params->{'_detail'}  && (!$c->stash->{print_enable_xref} || !defined $c->request->params->{'_xref'})) {
      # 
      # just print out the input form
      #
-     my $catdefault = $c->request->params->{tagid} || 'dropdown-first';
-     $c->stash->{tagbox} =  xlateit(fldropdown('tag','tagid','tag',$catdefault,'__mlmsg_any_tag__'),$c->user_object->{'lang'},$c->request->headers->{'user-agent'},"form");
-
+     
+     if (FreelexDB::Globals->enable_tags) {
+       my $tagdefault = $c->request->params->{tagid} || 'dropdown-first';
+       $c->stash->{tagbox} =  xlateit(fldropdown('tag','tagid','tag',$tagdefault,'__mlmsg_any_tag__'),$c->user_object->{'lang'},$c->request->headers->{'user-agent'},"form");
+     }
+     
+     if (FreelexDB::Globals->enable_categories) {
+       my $catdefault = $c->request->params->{categoryid} || 'dropdown-first';
+       $c->stash->{categorybox} =  xlateit(fldropdown('category','categoryid','category',$catdefault,'__mlmsg_any_category__'),$c->user_object->{'lang'},$c->request->headers->{'user-agent'},"form");
+     }
 
      $c->stash->{template} = 'printdetailreqform.tt';
      $c->detach('Freelex::View::TT')  
@@ -81,27 +89,46 @@ sub detail : Path('detail') {
          bail($c,'__mlmsg_end_is_before_start__');
          return;
       }
-     
-      if ($c->request->params->{'tagid'} && $c->request->params->{'tagid'} ne 'dropdown-first') {
+      
+      if (FreelexDB::Globals->enable_tags && $c->request->params->{'tagid'} && $c->request->params->{'tagid'} ne 'dropdown-first') {
          push @subclauses, ' (headwordid IN (SELECT headwordid FROM headwordtag WHERE headwordtag.headwordid=headword.headwordid AND tagid=' . $c->request->params->{'tagid'}  . '))';
       }
 
-#      if ($c->request->params('categoryid') && ($c->request->params('categoryid') ne 'dropdown-first')) {
-#         push @subclauses, ' categoryid = ' . $c->request->params('categoryid');
-#      }
+      if (FreelexDB::Globals->enable_categories && $c->request->params->{categoryid} && ($c->request->params->{categoryid} ne 'dropdown-first')) {
+        push @subclauses, ' categoryid = ' . $c->request->params->{categoryid};
+      }
       
       my $whereclause = join(' AND ',@subclauses); 
       $whereclause = ' WHERE ' . $whereclause    if $whereclause;
       $c->stash->{whereclause} = $whereclause;
       
-      $c->stash->{'printrows'} = Freelex::Model::FreelexDB::Headword->retrieve_from_sql($whereclause . ' ORDER BY  collateseq, headword, variantno');
+      $c->stash->{printrows} = FreelexDB::Headword->sth_to_objects(FreelexDB::Headword->sql_get_print_rows($whereclause));
+       
       if (defined $c->request->params->{'_detail'}) {   
       # print detail    
-         my @entries = ();
+         my $lastvariantno;
+         my $thisvariantno = "";       
+         my $lastword;
+         my $thisword = "";  
+         my $entrygroups = [];
+         my $entries = [];
          while (my $r = $c->stash->{printrows}->next) {
             my $entry = {};
-            foreach my $c (@{$c->stash->{display_order}}) {
-               my $val = $r->$c || "";
+            $lastvariantno = $thisvariantno;
+            $thisvariantno = $r->variantno || "";
+            $entry->{'newvariantno'} = ($thisvariantno ne $lastvariantno) ? 1 : 0;
+            $lastword = $thisword;
+            $thisword = $r->headword;
+            if ($thisword ne $lastword) {
+               if (@$entries) {
+                  push @{$entrygroups},$entries;
+               }
+               $entries = [];
+            }
+
+            foreach my $col (@{$c->stash->{display_order}}) {
+#               my $val = $r->$col || "";
+                my $val = $r->format($col,"plain",$col);
                if ($val =~ /<div>|<span>/) {
 #                   $val =~ s/<(?:\/)?(?:p|div)>//sig;
                     $val =~ s/<(?:p|div)>//sig;
@@ -109,11 +136,12 @@ sub detail : Path('detail') {
                } else {
                    $val =~ s/\n/\n<br>\n/sig;
                }
-               $entry->{$c} = entityise($val);
+               $entry->{$col} = entityise($val);
             }
-            push @entries,$entry;
+            push @{$entries},$entry;
          }
-         $c->stash->{'entries'} = \@entries;
+         push @{$entrygroups},$entries;
+         $c->stash->{entrygroups} = $entrygroups;
          
          $c->stash->{'template'} = 'printdetail.tt';
          

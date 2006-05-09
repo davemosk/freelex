@@ -118,7 +118,7 @@ sub sr_replace {
          $result = '<!-- ref:' . $hwid . ' -->' . '<b>' . $hw->headword . '<b>' . '<!-- end ref -->';
       }
       else {
-         $result = '<!-- ref:' . $hwid . ' -->' . '<a href="?_id=' . $hwid . '&_nav=no" target="_blank">' . $hw->headword . '</a>' . '<!-- end ref -->';
+         $result = '<!-- ref:' . $hwid . ' -->' . '<a href="../../headword/display?_id=' . $hwid . '&_nav=no" target="_blank">' . $hw->headword . '</a>' . '<!-- end ref -->';
       }
    }
    else { # no headword with that ID 
