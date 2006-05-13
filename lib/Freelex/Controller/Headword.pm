@@ -179,13 +179,14 @@ sub commit : Path('commit') {
   foreach my $col (FreelexDB::Headword->all_columns, FreelexDB::Headword->columns("TEMP"),FreelexDB::Headword->pseudo_cols) {
      $h->preupdate($col,$c)
   }
-  foreach my $col (FreelexDB::Headword->all_columns) {
-
-     next unless ref $h->find_column($col);
-     next unless $h->$col =~ /\#\#/;
-     my $deref = FreelexDB::Headword->dereference($h->$col);
-     $h->set($col,$deref)  unless $h->$col eq $deref;
-  }
+  
+#  foreach my $col (FreelexDB::Headword->all_columns) {
+#
+#     next unless ref $h->find_column($col);
+#     next unless $h->$col =~ /\#\#/;
+#     my $deref = FreelexDB::Headword->dereference($h->$col);
+#     $h->set($col,$deref)  unless $h->$col eq $deref;
+#  }
 
    
   if (defined $h->headwordid) { 

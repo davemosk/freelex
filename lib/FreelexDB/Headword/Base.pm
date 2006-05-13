@@ -92,7 +92,7 @@ sub format {
          $result =  $val
       }
    }
-   
+
    return substitute_references($result, $formatmode);
 }
 
@@ -100,7 +100,9 @@ sub substitute_references {
    my $val = shift;
    my $formatmode = shift || "";
    
-   $val =~ s/\#\#.*?(\d+)\#\#/&sr_replace($1,$formatmode)/ge;
+   $val =~ s/\#\#[^-]+\-([0123456789]+)\#\#/&sr_replace($1,$formatmode)/ge;  
+
+
    
    return $val;
 }
@@ -110,15 +112,23 @@ sub sr_replace {
    my $formatmode = shift;
    my $result = "";
    
+#   print STDERR join(':',$hwid,$formatmode),"\n";
+   
    if (my $hw = FreelexDB::Headword->retrieve($hwid)) {  
       if ($formatmode eq 'form') {
-         $result = '##' . $hw->headword . '-' . $hwid . '##'
+         $result =  '##' . $hw->headword . '-' . $hwid . '##'
       }
       elsif ($formatmode eq 'print') {
-         $result = '<!-- ref:' . $hwid . ' -->' . '<b>' . $hw->headword . '<b>' . '<!-- end ref -->';
+#         $result = '<!-- ref:' . $hwid . ' -->' . '<b>' . $hw->headword . '<b>' . '<!-- end ref -->';
+          my $hwref = $hw->headword;
+          if (defined $hw->variantno  &&  $hw->variantno) {
+              $hwref .= '<sup>' . $hw->variantno . '</sup>';
+          }
+          $result = '<b>' . $hwref . '<b>'; 
       }
       else {
-         $result = '<!-- ref:' . $hwid . ' -->' . '<a href="../../headword/display?_id=' . $hwid . '&_nav=no" target="_blank">' . $hw->headword . '</a>' . '<!-- end ref -->';
+#         $result = '<!-- ref:' . $hwid . ' -->' . '<a href="../../headword/display?_id=' . $hwid . '&_nav=no" target="_blank">' . $hw->headword . '</a>' . '<!-- end ref -->';
+          $result = '<b>' . '<a href="../../headword/display?_id=' . $hwid . '&_nav=no" target="_blank">' . $hw->headword . '</a>' . '</b>'
       }
    }
    else { # no headword with that ID 
@@ -126,19 +136,20 @@ sub sr_replace {
          $result = '##' . 'ERROR no headword with id-' . $hwid . '##';
       } 
       else {
-         $result =  '<!-- ref:' . $hwid . ' -->' . '<font color="#ff0000">error: no headword with id <b>' . $hwid . '</b></font>' . '<!-- end ref -->';
+           $result = '<font color="#ff0000">error: no headword with id-<b>' . $hwid . '</b></font>';
       }
    }
+#   print STDERR $result, "\n";
    return $result;   
 }
 
-sub dereference {
-   my $self = shift;
-   my $val = shift || return;
-   $val =~ s/\<\!\-\- ref\:(\d+) \-\-\>.*?\<\!\-\- end ref \-\-\>/\#\#$1\#\#/sg;
-   $val =~ s/\#\#.*?\-(\d+)\#\#/\#\#$1\#\#/sg;
-   return $val;
-}
+#sub dereference {
+#   my $self = shift;
+#   my $val = shift || return;
+#   $val =~ s/\<\!\-\- ref\:(\d+) \-\-\>.*?\<\!\-\- end ref \-\-\>/\#\#$1\#\#/sg;
+#   $val =~ s/\#\#.*?\-(\d+)\#\#/\#\#$1\#\#/sg;
+#   return $val;
+#}
    
 
 sub rowtohashref {
