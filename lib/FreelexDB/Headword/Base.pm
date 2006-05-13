@@ -100,7 +100,7 @@ sub substitute_references {
    my $val = shift;
    my $formatmode = shift || "";
    
-   $val =~ s/\#\#[^-]+\-([0123456789]+)\#\#/&sr_replace($1,$formatmode)/ge;  
+   $val =~ s/\#\#.+?\-([0123456789]+)\#\#/&sr_replace($1,$formatmode)/ge;  
 
 
    
@@ -128,7 +128,7 @@ sub sr_replace {
       }
       else {
 #         $result = '<!-- ref:' . $hwid . ' -->' . '<a href="../../headword/display?_id=' . $hwid . '&_nav=no" target="_blank">' . $hw->headword . '</a>' . '<!-- end ref -->';
-          $result = '<b>' . '<a href="../../headword/display?_id=' . $hwid . '&_nav=no" target="_blank">' . $hw->headword . '</a>' . '</b>'
+          $result = '<b>' . '<a href="../headword/display?_id=' . $hwid . '&_nav=no" target="_blank">' . $hw->headword . '</a>' . '</b>'
       }
    }
    else { # no headword with that ID 
