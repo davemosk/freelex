@@ -42,11 +42,12 @@ sub format {
    my $col = shift;
    my $formatmode = shift || 'plain';
    my @other_args = @_;
-   my $val;
-   unless ((ref $self) && (ref $self->find_column("$col")) && ($val = $self->get($col))) {
-      $val = "";
+   my $val = "";
+   if ((ref $self) && ($self->find_column($col))) {
+#      die $col . $formatmode . $self->$col . Dumper($self)    if $col eq 'gloss';
+      $val = $self->$col
    }
-     
+
    my $result = "";
    
    my $format_func_type = 'format_' . $col . '_' . $formatmode . '_type';
@@ -86,6 +87,9 @@ sub format {
          my $format_func_plain_name = 'format_' . $col . '_plain';
          if (defined &$format_func_plain_name) {
             $result =  eval('&'.$format_func_plain_name.'($self,@other_args)');
+         }
+         else {
+            $result = $val
          }
       }
       else {
