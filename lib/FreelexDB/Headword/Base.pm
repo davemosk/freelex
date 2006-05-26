@@ -103,6 +103,7 @@ sub format {
 sub substitute_references {
    my $val = shift;
    my $formatmode = shift || "";
+   return "" unless defined $val  && $val;
    
    $val =~ s/\@\@.+?\-([0123456789]+)\@\@/&sr_replace($1,$formatmode)/ge;  
 
