@@ -128,7 +128,7 @@ sub detail : Path('detail') {
 
             foreach my $col (@{$c->stash->{display_order}}) {
 #               my $val = $r->$col || "";
-                my $val = $r->format($col,"plain",$col);
+                my $val = $r->format($col,"print",$col);
                if ($val =~ /<div>|<span>/) {
 #                   $val =~ s/<(?:\/)?(?:p|div)>//sig;
                     $val =~ s/<(?:p|div)>//sig;
