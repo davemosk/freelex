@@ -129,7 +129,7 @@ sub sr_replace {
           if (defined $hw->variantno  &&  $hw->variantno) {
               $hwref .= '<sup>' . $hw->variantno . '</sup>';
           }
-          $result = '<b>' . $hwref . '<b>'; 
+          $result = '<b>' . $hwref . '</b>'; 
       }
       else {
 #         $result = '<!-- ref:' . $hwid . ' -->' . '<a href="../../headword/display?_id=' . $hwid . '&_nav=no" target="_blank">' . $hw->headword . '</a>' . '<!-- end ref -->';
