@@ -139,7 +139,31 @@ sub detail : Path('detail') {
                #
                # get rid of trailing white space
                #
-               $val =~ s/(<br>|<br \/>|\n|\r|\r\n|\n\r|\s+|\&nbsp;)+$//sig;
+               my $preval;
+               do {
+                  $preval = $val;
+                  $val =~ s/<br>\s*$//sig;
+                  $val =~ s/<br \/>\s*$//sig;
+                  $val =~ s/\n|\r|\r\n|\n\r$//sig;
+                  $val =~ s/\s+$//sig;
+                  $val =~ s/\&nbsp;\s*$//sig;
+                  $val =~ s/<p>(\s+|(\&nbsp;)+)+<\/p>$//sig;
+                  $val =~ s/<p>\s*$//sig;
+                  $val =~ s/<\/p>\s*$//sig;
+                  $val =~ s/<br(\s+\/)?>\s*<\/span>\s*$/<\/span>/sig;
+               } until ( $preval eq $val );
+
+               do {
+                  $preval = $val;
+                  $val =~ s/^<br>\s*//sig;
+                  $val =~ s/^<br \/>\s*//sig;
+                  $val =~ s/^(\n|\r|\r\n|\n\r)//sig;
+                  $val =~ s/^\s+$//sig;
+                  $val =~ s/^\&nbsp;\s*//sig;
+                  $val =~ s/^<p>(\s+|(\&nbsp;)+)+<\/p>//sig;
+                  $val =~ s/^<p>\s*//sig;
+                  $val =~ s/^<\/p>\s*//sig;
+               } until ( $preval eq $val );
 
                $entry->{$col} = entityise($val);
             }
