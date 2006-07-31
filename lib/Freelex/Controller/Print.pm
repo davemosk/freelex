@@ -136,6 +136,11 @@ sub detail : Path('detail') {
                } else {
                    $val =~ s/\n/\n<br>\n/sig;
                }
+               #
+               # get rid of trailing white space
+               #
+               $val =~ s/(<br>|<br \/>|\n|\r|\r\n|\n\r|\s+|\&nbsp;)+$//sig;
+
                $entry->{$col} = entityise($val);
             }
             push @{$entries},$entry;
