@@ -6,6 +6,16 @@ sub format_mastersynonymheadwordid_form {
    else { return fltextbox("mastersynonymheadwordid","") }
 }
 
+
+sub format_mastersynonymheadwordid_plain {
+   my $self = shift;
+   if (ref $self) {
+      return "" unless $self->mastersynonymheadwordid;
+      return $self->printedreference($self->mastersynonymheadwordid->headwordid);
+   }
+}
+
+
 sub postdisplay_mastersynonymheadwordid {
    my $self = shift;
    return $self->postdisplay_master_proto('synonym');
