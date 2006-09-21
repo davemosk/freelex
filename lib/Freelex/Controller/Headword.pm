@@ -83,7 +83,6 @@ sub display : Path('display') {
 
 sub commit : Path('commit') {
   my ( $self, $c ) = @_;
-  return 0 unless check_write_access($c);
   my $id = $c->request->params->{'_id'} || die "no id supplied";
   $c->stash->{id} = $id;
   $c->stash->{matapunauserid} =  $c->user_object->matapunauserid;
@@ -107,6 +106,8 @@ sub commit : Path('commit') {
      $c->stash->{history} = entityise(mlmessage('history',$c->user_object->lang),$c->request->headers->{'user-agent'});
   }
   
+    return 0 unless check_write_access($c, $h);
+
   #
   # Slurp in the form fields
   #
@@ -392,11 +393,22 @@ sub end : Private {
 
 sub check_write_access {
      my $c = shift;
-     return 1 if $c->user_object->canupdate;
-     $c->stash->{message} = entityise(mlmessage('no_write_access',$c->user_object->lang),$c->request->headers->{'user-agent'});
-     $c->stash->{'dont_render_template'} = 1;
-     $c->redirect('../freelex?_message=' . $c->stash->{message});
-     return 0;
+     my $h = shift;
+     return 1 if $c->user_object->sysadmin;
+     if (!$c->user_object->canupdate) {
+       $c->stash->{message} = entityise(mlmessage('no_write_access',$c->user_object->lang),$c->request->headers->{'user-agent'});
+       $c->stash->{'dont_render_template'} = 1;
+       $c->redirect('../freelex?_message=' . $c->stash->{message});
+       return 0;
+     }
+     return 1 unless ($h && ref $h && $h->lifecycleid);
+     if ($h->lifecycleid == FreelexDB::Globals->lifecycle_complete) {
+       $c->stash->{message} = entityise(mlmessage('cant_update_lifecycle_complete',$c->user_object->lang),$c->request->headers->{'user-agent'});
+       $c->stash->{'dont_render_template'} = 1;
+       $c->redirect('../freelex?_message=' . $c->stash->{message});
+       return 0;
+     }
+     return 1;
 }
 
 
@@ -410,6 +422,7 @@ sub makeprettyarray {
    my $lastvariantno;
    my $thisvariantno = "";
    $c->stash->{thisprinted} = 0;
+   $c->stash->{wordclass_join_char} = FreelexDB::Globals->wordclass_join_char;
    my @headwords = FreelexDB::Headword->search(  headword => $headword, { order_by => 'variantno, majsense, minsense' } );
    foreach my $hw (@headwords) {
       next if $hw->{headwordid} == $c->stash->{id};

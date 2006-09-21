@@ -11,7 +11,7 @@ sub format_mastersynonymheadwordid_plain {
    my $self = shift;
    if (ref $self) {
       return "" unless $self->mastersynonymheadwordid;
-      return $self->printedreference($self->mastersynonymheadwordid->headwordid);
+      return FreelexDB::Globals->master_synonym_ref_chars->[0] . $self->printedreference($self->mastersynonymheadwordid->headwordid) . FreelexDB::Globals->master_synonym_ref_chars->[1];
    }
 }
 

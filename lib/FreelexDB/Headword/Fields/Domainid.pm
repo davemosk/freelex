@@ -1,5 +1,11 @@
 sub default_domainid { 1 }
 
+sub format_domainid_plain {
+   my $self = shift;
+   return "" unless (ref $self && defined $self->domainid) && $self->domainid;
+   return $self->domainid->domain;
+}
+
 sub format_domainid_form {
    my $self = shift;
    my $fieldid = getfieldnamefromformatsub();  

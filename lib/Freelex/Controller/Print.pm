@@ -34,7 +34,7 @@ sub begin : Private {
      $c->stash->{category_prompt} = entityise(mlmessage('category',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
      $c->stash->{date} = localtime;
      $c->stash->{print_enable_xref} = FreelexDB::Globals->print_enable_xref || 0;
-     
+     $c->stash->{wordclass_join_char} = FreelexDB::Globals->wordclass_join_char;
   }
 }
 

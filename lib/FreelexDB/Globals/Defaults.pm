@@ -37,4 +37,12 @@ sub enable_categories { 0 }
 sub enable_tags { 1 }
 
 
+sub master_synonym_ref_chars { ['&#9654;',''] }
+sub master_variant_ref_char { ['=',''] }
+sub slave_synoym_ref_chars { ['{', '}'] }
+sub fullyexemplified_chars { ['<small>&#10016;</small>', ''] }
+sub wordclass_join_char { ',' }
+
+
+
 1;

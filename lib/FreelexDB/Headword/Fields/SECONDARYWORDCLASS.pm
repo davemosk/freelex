@@ -27,7 +27,7 @@ sub format_SECONDARYWORDCLASS_plain {
          push @result, $wordclass->symbol
       }
    }
-   return join('/',@result);
+   return join(FreelexDB::Globals->wordclass_join_char,@result);
 };
 
 1;
