@@ -5,7 +5,7 @@ use Data::Dumper;
 
 use Exporter ();
 our @ISA = ("Exporter");
-our @EXPORT = qw(fltextarea fltextbox flcheckbox fldropdown getfieldnamefromformatsub makecheckboxtable hyphenated flfckeditor trim sentencise);
+our @EXPORT = qw(fltextarea fltextbox flcheckbox fldropdown getfieldnamefromformatsub makecheckboxtable hyphenated flfckeditor trim sentencise printedreference);
 
 use FreelexDB::Globals ();
 use FreelexDB::Utils::Entities;
@@ -207,6 +207,24 @@ sub sentencise {
 	$st = trim(ucfirst($st));
 	$st .= '.'    unless $st =~ /\p{IsPunct}$/;
 	return $st;
+}
+
+
+sub printedreference {
+   my $self = shift;
+   my $refhid = shift || die "printedreference: no refhid supplied";
+   my $referred = FreelexDB::Headword->retrieve($refhid);
+   my $result = $referred->headword;
+   if ($referred->variantno) {
+      $result .= '<sup>' . $referred->variantno . '</sup>';
+   }
+   if ($referred->subentry) {
+      $result .= ' (' . $referred->subentry . ') ';
+   }
+   elsif ($referred->majsense) {
+      $result .= ' (' . $referred->majsense . ')';
+   }
+   return $result;
 }
 
 

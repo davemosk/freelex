@@ -1,7 +1,7 @@
 #!/usr/bin/perl;
 
 package FreelexDB::Hwarchive;
-  use base 'FreelexDB::DBI';
+  use base 'FreelexDB::Headword::Base';
   use strict;
 
   __PACKAGE__->set_up_table( "hwarchive" );

@@ -4,11 +4,13 @@ use strict;
 
 use Exporter ();
 our @ISA = ("Exporter");
-our @EXPORT = qw(getfamily getslaves mshidhtml masterformat masterrecursion extractfinaldigits ismaster format_master_form_proto postdisplay_master_proto);
+our @EXPORT = qw(getfamily getslaves mshidhtml masterformat masterrecursion extractfinaldigits ismaster format_master_form_proto postdisplay_master_proto post_update_makememaster_proto);
 
 use FreelexDB::Globals ();
 use FreelexDB::Utils::Entities;
 use FreelexDB::Utils::Format;
+use FreelexDB::Utils::Mlmessage;
+mlmessage_init;
 
 sub getfamily {
         my $self = shift;
@@ -185,8 +187,10 @@ sub extractfinaldigits {
 
 sub format_master_form_proto {
   my $self = shift;
+  my $c = shift;
   my $type = shift;
   my $colname = 'master' . $type . 'headwordid';
+  my $makemastername = 'MAKEMEMASTER'.$type;
    
    my $masterheadwordstr;
     
@@ -198,7 +202,12 @@ sub format_master_form_proto {
    my $mstextbox = fltextbox($colname,$masterheadwordstr);
    
    my $msfamily = $self->getfamily($type,'html') || "";
-   return $mstextbox . '<br>' . $msfamily;
+
+   my $mmchecked = ($c && $c->{request}->{parameters}->{$makemastername}) ? ' CHECKED' : ''; 
+
+   my $makemasterckbox = $msfamily ? qq(<br><input type="checkbox" name="$makemastername" value="1" $mmchecked>) . '&nbsp;' . entityise(mlmessage('make_me_master_'.$type,$c->user_object->{lang})) : ""; 
+
+   return $mstextbox . '<br>' . $msfamily . $makemasterckbox;
 }
 
 sub postdisplay_master_proto {
@@ -211,5 +220,37 @@ sub postdisplay_master_proto {
    $self->set($colname,$mshiddigits);
    return;
 }
+
+sub post_update_makememaster_proto {
+   my $self = shift;
+   my $c = shift;
+   my $type = shift;
+
+   my $searchcol = 'master'.$type.'headwordid';
+   my $oldmasterval = $self->$searchcol->headwordid;
+   my $newmasterval = $self->headwordid;
+
+   my @family = FreelexDB::Headword->search( $searchcol => $oldmasterval );
+
+   foreach my $e (@family) {
+      if ($e->headwordid eq $self->headwordid) {
+      # if it's us, change ours to blank as we're the new master
+         $self->set($searchcol,undef);
+         $self->update();
+      }
+      else {
+      # change other slaves to point to us
+         $e->set($searchcol,$newmasterval);
+         $e->update();
+      }
+    }
+
+    # change original master to point to us
+    my $oldmaster = FreelexDB::Headword->retrieve($oldmasterval);
+    $oldmaster->set($searchcol,$newmasterval);
+    $oldmaster->update();     
+
+}
+
 
 1;

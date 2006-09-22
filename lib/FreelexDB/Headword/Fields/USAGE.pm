@@ -24,7 +24,7 @@ sub format_USAGE_plain {
    foreach my $usage  (FreelexDB::Usage->retrieve_all) {
       $usagemethod = 'usage' . $usage->usageid;
       if (defined $self->$usagemethod && $self->$usagemethod) {
-         push @result, $usage->usage
+         push @result, $usage->symbol
       }
    }
    return join('/',@result);
