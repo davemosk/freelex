@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>[% system_name %] Freelex Search and Replace</title>
+<STYLE TYPE="text/css">
+  BODY, H1, P, TD, INPUT, SELECT, TEXTAREA { font-family: "Lucida Grande", "Lucida Sans Unicode", "Arial Unicode MS", Helvetica, Arial, sans-serif }
+  TT {font-family: "Courier CE", "Courier New", "Luxi Mono", monospace; font-size: small}
+</STYLE>
+</head>
+<body bgcolor="ffffff">
+[% INCLUDE nav.inc %]
+<br>
+<form action="searchandreplace" method="post">
+<input type="hidden" name="_s" value="commit">
+<input type="hidden" name="_text" value="[% search_text_box %]">
+<input type="hidden" name="_replacetext" value="[% replace_text_box %]">
+<table border="0">
+<tr><td valign="top">[% search_prompt %]</td><td>&nbsp;</td><td>[% search_text_box %]</td></tr>
+<tr><td valign="top">[% replace_prompt %]</td><td>&nbsp;</td><td>[% replace_text_box %]</td></tr>
+<tr><td valign="top">[% include_columns_prompt %]</td><td></td><td>
+[% FOREACH f IN search_and_replace_cols %]
+<input type="hidden" name="[% f.col %]" value="1">[% f.colname %]<br>
+[% END %]
+</td></tr>
+<tr><td></td><td></td><td>[% IF hits > 0 %]<input type="submit" value="[% make_changes_button %]">[%  END %]</td></tr>
+</table>
+[% IF hits > 0 %]
+<table border="0">
+[% FOREACH hit IN hitlist %]
+<tr><td colspan="3"><a href="../headword/display?_id=[% hit.headwordid %]" target="_blank">[% hit.headword %]</a></td></tr>
+[% FOREACH hitcol IN hit.hitcols %]
+<tr><td valign="top">[% IF hit.nowriteaccess %]<small><small><font color="#996666">[% hit.nowriteaccess %]</font></small></small>[% ELSE %]<input type="checkbox" name="replace|[% hit.headwordid %]|[% hitcol.name %]" CHECKED>[% END %]</td><td valign="top">
+[% hitcol.label %]</td><td valign="top">[% hitcol.value %]</td></tr>
+[% END %]
+[% END %]
+[% END %]
+</table>
+[% IF hits > 0 %]<input type="submit" value="[% make_changes_button %]">
+[% ELSE %][% no_entries_met_criteria %][% END %]
+</form>
+<br><br>
+[% INCLUDE nav.inc %]
+</body>
+</html>

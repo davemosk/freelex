@@ -3,6 +3,8 @@ package Freelex::Controller::Search;
 use base qw/Catalyst::Controller/;
 use strict;
 
+use Data::Dumper;
+
 use FreelexDB::Utils::Format;
 use FreelexDB::Utils::Entities;
 freelex_entities_init;
@@ -20,11 +22,12 @@ sub begin : Private {
      $c->stash->{system_name} = entityise(FreelexDB::Globals->system_name);
      $c->stash->{user_object} = $c->user_object;
      $c->stash->{display_nav} = 1  unless defined $c->request->params->{'_nav'} && $c->request->params->{'_nav'} eq 'no'; 
+     $c->stash->{date} = localtime;
   }
 }
 
 
-sub search : Path {
+sub search : Path('/search') {
    my ($self, $c) = @_;
    $c->stash->{template} = 'search.tt';  
    my $date = localtime;
@@ -104,6 +107,28 @@ sub search : Path {
      FreelexDB::Activityjournal->dbi_commit;  
    }
 }
+
+
+sub searchandreplace : Path('/searchandreplace') {
+   my ($self, $c) = @_;
+   my $lang = $c->user_object->lang;
+   my $ua = $c->request->headers->{'user-agent'};
+   $c->redirect('search')   unless FreelexDB::Globals->enable_search_and_replace;
+   if (!$c->request->params->{'_s'}) {
+     $c->stash->{template} = 'searchandreplace1.tt';  
+     $self->setup_search_and_replace_form($c);
+   }
+   elsif ($c->request->params->{'_s'} eq 'review') {
+     $c->stash->{template} = 'searchandreplace2.tt';  
+     $self->setup_replace_review_form($c);
+   }
+   elsif ($c->request->params->{'_s'} eq 'commit') {
+     $c->stash->{template} = 'searchandreplace3.tt';  
+     $self->commit_search_replace($c);
+   }
+   else { die "unknown function requested" }
+}
+      
       
 sub end : Private {
    my ( $self, $c ) = @_;
@@ -173,5 +198,170 @@ sub setup_search_form {
    push @result, '<br>';
    return join("\n",@result);
 }   
+
+sub setup_search_and_replace_form {
+  my ($self, $c) = @_;
+  my $lang = $c->user_object->lang;
+  my $ua = $c->request->headers->{'user-agent'};
+  $c->stash->{search_prompt} = entityise(mlmessage('search_prompt',$lang));
+  $c->stash->{search_text_box} = fltextbox('_text',"");
+  $c->stash->{replace_prompt} = entityise(mlmessage('replace_prompt',$lang));
+  $c->stash->{replace_text_box} = fltextbox('_replacetext',"");
+  $c->stash->{include_columns_prompt} = entityise(mlmessage('include_columns_prompt',$lang));
+  $c->stash->{review_changes_button} = entityise(mlmessage('review_changes_button',$lang));
+  my $cols = FreelexDB::Headword->search_and_replace_cols;
+  $c->stash->{search_and_replace_cols} = []; 
+  foreach my $f (@{$cols}) {
+    push @{$c->stash->{search_and_replace_cols}}, { col =>$f, colname=> entityise(mlmessage($f,$lang),$ua,"form") } ;
+  }
+}
+
+sub setup_replace_review_form {
+  my ($self, $c) = @_;
+  my $lang = $c->user_object->lang;
+  my $ua = $c->request->headers->{'user-agent'};
+  $c->stash->{search_prompt} = entityise(mlmessage('search_prompt',$lang));
+  $c->stash->{search_text_box} = $c->request->params->{'_text'};
+  $c->stash->{replace_prompt} = entityise(mlmessage('replace_prompt',$lang));
+  $c->stash->{replace_text_box} = $c->request->params->{'_replacetext'};
+  $c->stash->{include_columns_prompt} = entityise(mlmessage('include_columns_prompt',$lang));
+  $c->stash->{make_changes_button} = entityise(mlmessage('make_changes_button',$lang));
+  $c->stash->{no_entries_met_criteria} = entityise(mlmessage('no_entries_met_criteria',$lang));
+  setup_search_and_replace_cols($c);
+# restrict to word boundaries
+#  my $term = "'" . '\\b' . $c->request->params->{'_text'} . '\\b' . "'";
+  my $perlmatchtext = '\b(' . $c->request->params->{'_text'} . ')\b';
+  my $sqlmatchtext = "'"  . $c->request->params->{'_text'}  .  "'";
+# I'm not happy about the above - I can't get any of the word-boundary matching mechanisms to work. :-(
+  my @wheresubclauses = ();
+  foreach my $col (@{$c->stash->{search_and_replace_cols}}) {
+    push @wheresubclauses, $col->{col} . ' ~* ' . $sqlmatchtext;
+  }
+  my $whereclause = join(' OR ', @wheresubclauses);
+  $whereclause .= ' ORDER BY collateseq, headword, variantno, majsense, wordclassid, headwordid';
+
+  if (my @rows = Freelex::Model::FreelexDB::Headword->retrieve_from_sql($whereclause)) {
+    $c->stash->{message} .= entityise(mlmessage('your_search_produced_matches',$c->user_object->lang,$c->request->params->{_text},scalar @rows));
+              
+    my @hitlist = ();
+    foreach my $row (@rows) {
+      my $matchingcols = [];
+      foreach my $srcol (@{$c->stash->{search_and_replace_cols}}) {
+          my $col = $srcol->{col};
+          next unless $row->$col =~ /$perlmatchtext/i;
+          my $val = $row->$col;
+          $val =~ s/$perlmatchtext/<font color="#CC3333"><b>$1<\/b><\/font>/ig;
+          push @$matchingcols, { name => $col, label => entityise(mlmessage($col,$lang)), value => entityise($val) };
+          $c->stash->{hits}++;
+      }
+      next unless @$matchingcols;
+      my $rowresults = { headword => $row->headword, headwordid => $row->headwordid, hitcols => $matchingcols, nowriteaccess => $row->no_write_access($c) };
+      push @hitlist, $rowresults;
+    } 
+  $c->stash->{hitlist} = \@hitlist;
+  }
+  else {
+    $c->stash->{message} .= entityise(mlmessage('your_search_produced_no_matches',$c->user_object->lang,$c->request->params->{_text}));
+  }
+
+}
+
+sub commit_search_replace {
+   my $self = shift;
+   my $c = shift;
+   my $lang = $c->user_object->lang;
+   my $ua = $c->request->headers->{'user-agent'};
+
+   $c->stash->{search_prompt} = entityise(mlmessage('search_prompt',$lang));
+   $c->stash->{search_text_box} = $c->request->params->{'_text'};
+   $c->stash->{replace_prompt} = entityise(mlmessage('replace_prompt',$lang));
+   $c->stash->{replace_text_box} = $c->request->params->{'_replacetext'};
+   $c->stash->{include_columns_prompt} = entityise(mlmessage('include_columns_prompt',$lang));
+   my $date = localtime;
+
+
+   my $searchtext = $c->request->params->{'_text'};
+   my $ucsearchtext = uc($searchtext);
+   my $ucfirstsearchtext = ucfirst($searchtext);
+
+   my $replacetext = $c->request->params->{'_replacetext'};
+   my $ucreplacetext = uc($replacetext);
+   my $ucfirstreplacetext = ucfirst($replacetext);
+
+   my $updates = {};
+
+  setup_search_and_replace_cols($c);
+
+#
+# get our queued updates 
+#
+   foreach my $p (keys %{$c->request->params}) {
+      next unless $p =~ /^replace/;
+      my ($replace, $headwordid, $col) = split(/\|/,$p);
+      unless ($updates->{$headwordid}) { $updates->{$headwordid} = [] };
+      push @{$updates->{$headwordid}}, $col;
+   }
+
+# now process them
+
+   my $entrycount = 0;
+   foreach my $p (keys %$updates) {
+      my $headword = FreelexDB::Headword->retrieve($p);
+      my $entrychanged = 0;
+      foreach my $col (@{$updates->{$p}}) {
+         my $colchanged = 0;
+         my $val = $headword->$col;
+         $colchanged = 1   if  $val =~ s/\b$searchtext\b/$replacetext/sg ;
+         $colchanged = 1   if  $val =~ s/\b$ucsearchtext\b/$ucreplacetext/sg ;
+         $colchanged = 1   if  $val =~ s/\b$ucfirstsearchtext\b/$ucfirstreplacetext/sg;
+
+         unless ($colchanged) {
+            $colchanged = 1   if  $val =~ s/\b$searchtext\b/$replacetext/sgi;
+         }
+
+         if ($colchanged) {
+            $headword->set($col,$val)   ;
+            $entrychanged = 1 ;
+         }
+
+      }
+      if ($entrychanged) {
+        $headword->add_to_editorialcomment( {
+                editorialcommentdate => $c->stash->{date},
+                matapunauserid => $c->user_object->matapunauserid,
+                editorialcomment => 'Search-and-replace changed "' . $searchtext . '" to "' . $replacetext . '" in ' . join(',', @{$updates->{$p}})
+              });
+        $headword->update;
+        $headword->dbi_commit;
+        $entrycount++;
+      }
+   }
+   
+my $description = $searchtext . ' to ' . $replacetext . "..." . $entrycount . " entries updated";
+
+
+   FreelexDB::Activityjournal->insert( {
+       activitydate => $date,
+       matapunauserid => $c->user_object->matapunauserid,
+       verb => 'searchandreplace',
+       object => 'headword',
+       description => $description
+       });
+     FreelexDB::Activityjournal->dbi_commit;  
+
+   $c->stash->{num_entries_updated} = entityise(mlmessage('num_entries_updated',$c->user_object->lang,$entrycount));
+
+}
+
+sub setup_search_and_replace_cols {
+  my $c = shift;
+  my $cols = FreelexDB::Headword->search_and_replace_cols;
+  $c->stash->{search_and_replace_cols} = []; 
+  foreach my $f (@{$cols}) {
+    next unless $c->request->params->{$f};
+    push @{$c->stash->{search_and_replace_cols}}, { col =>$f, colname=> entityise(mlmessage($f,$c->user_object->lang),$c->request->headers->{'user-agent'},"form") } ;
+  }
+}
+
 
 1;

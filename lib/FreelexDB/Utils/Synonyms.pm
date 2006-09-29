@@ -226,6 +226,10 @@ sub post_update_makememaster_proto {
    my $c = shift;
    my $type = shift;
 
+   my $makemastername = 'MAKEMEMASTER'.$type;
+
+   return unless $c->request->params->{$makemastername};
+
    my $searchcol = 'master'.$type.'headwordid';
    my $oldmasterval = $self->$searchcol->headwordid;
    my $newmasterval = $self->headwordid;

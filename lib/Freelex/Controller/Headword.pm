@@ -50,9 +50,14 @@ sub display : Path('display') {
      $c->stash->{history} = entityise(mlmessage('history',$c->user_object->lang),$c->request->headers->{'user-agent'});
 
   } 
+  elsif (my $writefailmsg = FreelexDB::Headword->no_write_access($c)) {
+     $c->stash->{message} = $writefailmsg;
+     $c->stash->{'dont_render_template'} = 1;
+     $c->redirect('display?_id='.$id.'&_message=' . $c->stash->{message});
+     return 0;
+  } 
   else {
-     return 0 unless check_write_access($c);
-     $c->stash->{title} = mlmessage('add_headword',$c->user_object->lang,$c->request->headers->{'user-agent'});
+    $c->stash->{title} = mlmessage('add_headword',$c->user_object->lang,$c->request->headers->{'user-agent'});
   }  
   $c->stash->{fields} = {};
   $c->stash->{warnings} = {};
@@ -105,8 +110,12 @@ sub commit : Path('commit') {
      #
      $c->stash->{history} = entityise(mlmessage('history',$c->user_object->lang),$c->request->headers->{'user-agent'});
   }
-  
-    return 0 unless check_write_access($c, $h);
+  if (my $writefailmsg = $h->no_write_access($c)) {
+     $c->stash->{message} = entityise($writefailmsg,$c->request->headers->{'user-agent'});
+     $c->stash->{'dont_render_template'} = 1;
+     $c->redirect('display?_id='.$id.'&_message=' . $c->stash->{message});
+     return 0;
+  }
 
   #
   # Slurp in the form fields
@@ -391,25 +400,6 @@ sub end : Private {
    die "You requested a dump"   if ((defined $c->request->params->{'dump'}) && $c->request->params->{'dump'} eq 1);
 }
 
-sub check_write_access {
-     my $c = shift;
-     my $h = shift;
-     return 1 if $c->user_object->sysadmin;
-     if (!$c->user_object->canupdate) {
-       $c->stash->{message} = entityise(mlmessage('no_write_access',$c->user_object->lang),$c->request->headers->{'user-agent'});
-       $c->stash->{'dont_render_template'} = 1;
-       $c->redirect('../freelex?_message=' . $c->stash->{message});
-       return 0;
-     }
-     return 1 unless ($h && ref $h && $h->lifecycleid);
-     if ($h->lifecycleid == FreelexDB::Globals->lifecycle_complete) {
-       $c->stash->{message} = entityise(mlmessage('cant_update_lifecycle_complete',$c->user_object->lang),$c->request->headers->{'user-agent'});
-       $c->stash->{'dont_render_template'} = 1;
-       $c->redirect('../freelex?_message=' . $c->stash->{message});
-       return 0;
-     }
-     return 1;
-}
 
 
 sub makeprettyarray {

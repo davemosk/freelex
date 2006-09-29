@@ -35,7 +35,7 @@ sub character_hacks { return undef };
 sub print_enable_xref { 0 }
 sub enable_categories { 0 }
 sub enable_tags { 1 }
-
+sub enable_search_and_replace { 0 }
 
 sub master_synonym_ref_chars { ['&#9654;',''] }
 sub master_variant_ref_char { ['=',''] }
@@ -43,6 +43,7 @@ sub slave_synoym_ref_chars { ['{', '}'] }
 sub fullyexemplified_chars { ['<small>&#10016;</small>', ''] }
 sub wordclass_join_char { ',' }
 
+sub lifecycle_complete { 4000 }
 
 
 1;

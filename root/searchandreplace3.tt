@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>[% system_name %] Freelex Search and Replace</title>
+<STYLE TYPE="text/css">
+  BODY, H1, P, TD, INPUT, SELECT, TEXTAREA { font-family: "Lucida Grande", "Lucida Sans Unicode", "Arial Unicode MS", Helvetica, Arial, sans-serif }
+  TT {font-family: "Courier CE", "Courier New", "Luxi Mono", monospace; font-size: small}
+</STYLE>
+</head>
+<body bgcolor="ffffff">
+[% INCLUDE nav.inc %]
+<br>
+<table border="0">
+<tr><td valign="top">[% search_prompt %]</td><td>&nbsp;</td><td>[% search_text_box %]</td></tr>
+<tr><td valign="top">[% replace_prompt %]</td><td>&nbsp;</td><td>[% replace_text_box %]</td></tr>
+<tr><td valign="top">[% include_columns_prompt %]</td><td></td><td>
+[% FOREACH f IN search_and_replace_cols %]
+[% f.colname %]<br>
+[% END %]
+</td></tr>
+</table>
+<br><br>
+[% num_entries_updated %]
+<br><br>
+[% INCLUDE nav.inc %]
+</body>
+</html>

@@ -10,6 +10,8 @@ package FreelexDB::Headword::Base;
   use FreelexDB::Utils::Entities;
   use FreelexDB::Utils::Validation;
   use FreelexDB::Utils::Synonyms;
+  use FreelexDB::Utils::Mlmessage;
+
   
   use Carp;
   
@@ -179,6 +181,24 @@ sub canupdate {
    return 0;  
 }
    
+
+sub no_write_access {
+     my $self = shift;
+     my $c = shift;
+     my $message = "";
+     return 0 if $c->user_object->sysadmin;
+     if (!$c->user_object->canupdate) {
+       $message = mlmessage('no_write_access',$c->user_object->lang);
+       return $message;
+     }
+     return 0 unless ($self && ref $self && $self->lifecycleid);
+     if ($self->lifecycleid == FreelexDB::Globals->lifecycle_complete) {
+       $message =  mlmessage('cant_update_lifecycle_complete',$c->user_object->lang);
+       return $message;
+     }
+     return 0;
+}
+
 
 sub validate {
    my $self = shift;
