@@ -21,7 +21,6 @@
 <input type="hidden" name="[% f.col %]" value="1">[% f.colname %]<br>
 [% END %]
 </td></tr>
-<tr><td></td><td></td><td>[% IF hits > 0 %]<input type="submit" value="[% make_changes_button %]">[%  END %]</td></tr>
 </table>
 [% IF hits > 0 %]
 <table border="0">
