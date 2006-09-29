@@ -307,6 +307,7 @@ sub commit_search_replace {
    my $entrycount = 0;
    foreach my $p (keys %$updates) {
       my $headword = FreelexDB::Headword->retrieve($p);
+      $c->stash->{archivecopy} = $headword->rowtohashref;
       my $entrychanged = 0;
       foreach my $col (@{$updates->{$p}}) {
          my $colchanged = 0;
@@ -331,8 +332,16 @@ sub commit_search_replace {
                 matapunauserid => $c->user_object->matapunauserid,
                 editorialcomment => 'Search-and-replace changed "' . $searchtext . '" to "' . $replacetext . '" in ' . join(',', @{$updates->{$p}})
               });
+        $headword->set('updatedate',$c->stash->{date});
+        $headword->set('updateuserid',$c->user_object->matapunauserid);
         $headword->update;
         $headword->dbi_commit;
+
+        $c->stash->{archivecopy}->{'archiveuserid'} = $c->user_object->matapunauserid;
+        $c->stash->{archivecopy}->{'archivedate'} = $c->stash->{date};
+        my $archive = FreelexDB::Hwarchive->insert($c->stash->{archivecopy});
+        $archive->dbi_commit;
+
         $entrycount++;
       }
    }
