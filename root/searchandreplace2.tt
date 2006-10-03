@@ -25,7 +25,7 @@
 [% IF hits > 0 %]
 <table border="0">
 [% FOREACH hit IN hitlist %]
-<tr><td colspan="3"><a href="../headword/display?_id=[% hit.headwordid %]" target="_blank">[% hit.headword %]</a></td></tr>
+<tr><td colspan="3"><a href="headword/display?_id=[% hit.headwordid %]" target="_blank">[% hit.headword %]</a></td></tr>
 [% FOREACH hitcol IN hit.hitcols %]
 <tr><td valign="top">[% IF hit.nowriteaccess %]<small><small><font color="#996666">[% hit.nowriteaccess %]</font></small></small>[% ELSE %]<input type="checkbox" name="replace|[% hit.headwordid %]|[% hitcol.name %]" CHECKED>[% END %]</td><td valign="top">
 [% hitcol.label %]</td><td valign="top">[% hitcol.value %]</td></tr>
