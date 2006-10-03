@@ -305,6 +305,7 @@ sub commit_search_replace {
 # now process them
 
    my $entrycount = 0;
+   my @hyphenated_changed_entries = ();
    foreach my $p (keys %$updates) {
       my $headword = FreelexDB::Headword->retrieve($p);
       $c->stash->{archivecopy} = $headword->rowtohashref;
@@ -334,6 +335,9 @@ sub commit_search_replace {
               });
         $headword->set('updatedate',$c->stash->{date});
         $headword->set('updateuserid',$c->user_object->matapunauserid);
+
+        push @hyphenated_changed_entries, $headword->hyphenated;
+
         $headword->update;
         $headword->dbi_commit;
 
@@ -346,7 +350,7 @@ sub commit_search_replace {
       }
    }
    
-my $description = $searchtext . ' to ' . $replacetext . "..." . $entrycount . " entries updated";
+   my $description = $searchtext . ' to ' . $replacetext . "..." . $entrycount . " entries updated: " . join(', ',@hyphenated_changed_entries);
 
 
    FreelexDB::Activityjournal->insert( {
