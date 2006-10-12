@@ -53,7 +53,7 @@ sub detail : Path('detail') {
      
      if (FreelexDB::Globals->enable_tags) {
        my $tagdefault = $c->request->params->{tagid} || 'dropdown-first';
-       $c->stash->{tagbox} =  xlateit(fldropdown('tag','tagid','tag',$tagdefault,'__mlmsg_any_tag__'),$c->user_object->{'lang'},$c->request->headers->{'user-agent'},"form");
+       $c->stash->{tagbox} =  xlateit(fldropdown('tag','tagid','tag',$tagdefault,undef,5),$c->user_object->{'lang'},$c->request->headers->{'user-agent'},"form");
      }
      
      if (FreelexDB::Globals->enable_categories) {
@@ -91,7 +91,8 @@ sub detail : Path('detail') {
       }
       
       if (FreelexDB::Globals->enable_tags && $c->request->params->{'tagid'} && $c->request->params->{'tagid'} ne 'dropdown-first') {
-         push @subclauses, ' (headwordid IN (SELECT headwordid FROM headwordtag WHERE headwordtag.headwordid=headword.headwordid AND tagid=' . $c->request->params->{'tagid'}  . '))';
+         my @tagarray = ref $c->request->params->{'tagid'} eq 'ARRAY' ? @{$c->request->params->{'tagid'}} : $c->request->params->{'tagid'};
+         push @subclauses, ' (headwordid IN (SELECT headwordid FROM headwordtag WHERE headwordtag.headwordid=headword.headwordid AND tagid IN (' . join(',',@tagarray)  . ')))';
       }
 
       if (FreelexDB::Globals->enable_categories && $c->request->params->{categoryid} && ($c->request->params->{categoryid} ne 'dropdown-first')) {
