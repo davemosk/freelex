@@ -1,5 +1,18 @@
 use Data::Dumper;
 
+sub format_HEADWORDTAGS_plain {
+   my $self = shift;   
+   my $c = shift;
+   my @hwtags;
+
+   if (my @headwordtags = $self->headwordtags) {
+      foreach my $ht (@headwordtags) {
+         push @hwtags, $ht->tagid->tag;
+      }
+   }
+   return join(',', sort @hwtags);
+}
+
 sub format_HEADWORDTAGS_form {
    my $self = shift;   
    my $c = shift;
