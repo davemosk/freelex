@@ -25,7 +25,7 @@ sub display_order_form {
 }
 
 sub pseudo_cols {
-   return grep {  $_ eq uc($_) } @{__PACKAGE__->display_order_form};
+   return grep {  $_ eq uc($_) } @{FreelexDB::Headword->display_order_form};
 }
 
 sub display_order_print {

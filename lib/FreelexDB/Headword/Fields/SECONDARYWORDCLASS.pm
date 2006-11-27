@@ -22,12 +22,22 @@ sub format_SECONDARYWORDCLASS_plain {
    return "" unless ref $self;
    
    foreach my $wordclass  (FreelexDB::Wordclass->search( canbesecondary => 't', { order_by => 'wordclass' }  )) {
-      $wcsmethod = 'wcs' . $wordclass->wordclassid;
+      my $wcsmethod = 'wcs' . $wordclass->wordclassid;
       if (defined $self->$wcsmethod && $self->$wcsmethod) {
          push @result, $wordclass->symbol
       }
    }
    return join(FreelexDB::Globals->wordclass_join_char,@result);
 };
+
+
+sub pre_update_SECONDARYWORDCLASS {
+   my $self = shift;
+   my $c = shift;
+   foreach my $wordclass  (FreelexDB::Wordclass->search( canbesecondary => 't', { order_by => 'wordclass' }  )) {
+      my $wcsmethod = 'wcs' . $wordclass->wordclassid;
+      $self->set($wcsmethod,0)    unless $c->request->parameters->{$wcsmethod};
+   }
+}
 
 1;
