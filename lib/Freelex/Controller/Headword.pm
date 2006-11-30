@@ -258,7 +258,8 @@ sub commit : Path('commit') {
     return;
   }
   else {  
-     $c->redirect('display?_id=' . $id . '&_message=' . $c->{stash}->{message});
+     my $wfindicator = $c->stash->{workflow} ? '&_wf=1' : "";
+     $c->redirect('display?_id=' . $id . $wfindicator . '&_message=' . $c->{stash}->{message});
      $c->stash->{'dont_render_template'} = 1; 
   }
   
