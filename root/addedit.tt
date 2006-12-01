@@ -11,9 +11,10 @@
 [% IF workflow %]
 <input type="hidden" name="_wf" value="1">
 [% END %]
-<table>
 [% IF message %]<font color="red"><b>[% message %]</b></font><br>[% END %]
-[% INCLUDE prettyentry.tt %]
+<table>
+<tr><td colspan="3">[% INCLUDE prettyentry.tt %]</td></tr>
+[% INCLUDE submit_buttons %]
 [% FOREACH field IN display_order %]
    <tr><td valign="top">[% fieldnamexlated.$field %]</td><td>&nbsp;</td><td valign="top">[% IF warnings.$field %]<font color="red"><b>[% warnings.$field %]</b></font><br>[% END %][% fields.$field %]</td></tr>
 [% END %]
@@ -23,10 +24,21 @@
 [% IF sysadmin %]
 <tr><td></td><td></td><td><input type="checkbox" name="dump" value="1">&nbsp;Dump</td></tr>
 [% END %]
-<tr><td></td><td></td><td>[% IF history %]
+[% IF history %]
+<tr><td></td><td></td><td>
 <a href="history?_nav=no&_id=[% id %]" target="_blank">[% history %]</a><br><br>
+</td></tr>
 [% END %]
+[% INCLUDE submit_buttons %]
+</table>
+<br>
+[% IF display_nav %][% INCLUDE navl2.inc %][% END %]
+</body>
+</html>
+
+[% BLOCK submit_buttons %]
 [% IF user_object.canupdate %]
+<tr><td></td><td></td><td>
 <input type="submit" value="save">
 [% IF workflow %]
 <input name="_nextwf" type="submit" value="[% wf_next_entry %]">
@@ -34,10 +46,6 @@
 [% IF id != "new" %]
 <input name="_delete" type="submit" value="delete">
 [% END %]
-[% END %]
 </td></tr>
-</table>
-<br>
-[% IF display_nav %][% INCLUDE navl2.inc %][% END %]
-</body>
-</html>
+[% END %]
+[% END %]
