@@ -79,6 +79,7 @@ sub display : Path('display') {
         $c->stash->{thispretty}->{$col} = entityise($h->format(trim($col),"plain"));
      }
      $c->stash->{thispretty}->{_variantno} = $h->variantno   if ((defined $h->variantno) && $h->variantno);
+     $c->stash->{thispretty}->{_majsense} = $h->majsense   if ((defined $h->majsense) && $h->majsense);
      $c->stash->{headword} = $h->headword;
      $c->stash->{sensestr} = makesensestr($h);
      makeprettyarray($c);
@@ -412,6 +413,8 @@ sub makeprettyarray {
    my $thissensestr = "";
    my $lastvariantno;
    my $thisvariantno = "";
+   my $lastmajsense;
+   my $thismajsense = "";
    $c->stash->{thisprinted} = 0;
    $c->stash->{wordclass_join_char} = FreelexDB::Globals->wordclass_join_char;
    my @headwords = FreelexDB::Headword->search(  headword => $headword, { order_by => 'variantno, majsense, minsense' } );
@@ -424,8 +427,12 @@ sub makeprettyarray {
       if (!$c->stash->{thisprinted} && ($c->stash->{sensestr} ge $lastsensestr) && ($c->stash->{sensestr} lt $thissensestr)) {
          $lastvariantno = $thisvariantno;
          $thisvariantno = $c->stash->{thispretty}->{_variantno};
+         $lastmajsense = $thismajsense;
+         $thismajsense = $c->stash->{thispretty}->{_majsense};
          $c->stash->{thispretty}->{'_variantno'} = $thisvariantno;
          $c->stash->{thispretty}->{'newvariantno'} = ($thisvariantno ne $lastvariantno) ? 1 : 0; 
+         $c->stash->{thispretty}->{'_majsense'} = $thismajsense;
+         $c->stash->{thispretty}->{'newmajsense'} = ($thismajsense ne $lastmajsense) ? 1 : 0;
          $c->stash->{thispretty}->{'newheadword'} = 1;
          push @{$prettyarray}, $c->stash->{thispretty};    
          $c->stash->{thisprinted} = 1;    
@@ -434,6 +441,10 @@ sub makeprettyarray {
       $thisvariantno = (defined $hw->variantno && $hw->variantno) ? $hw->variantno : "";
       $pretty->{'_variantno'} = $thisvariantno;
       $pretty->{'newvariantno'} = ($thisvariantno ne $lastvariantno) ? 1 : 0;
+      $lastmajsense = $thismajsense;
+      $thismajsense = (defined $hw->majsense && $hw->majsense) ? $hw->majsense : "";
+      $pretty->{'_majsense'} = $thismajsense;
+      $pretty->{'newmajsense'} = ($thismajsense ne $lastmajsense) ? 1 : 0;
       foreach my $col (@{FreelexDB::Headword->display_order_print}) {   
          $pretty->{$col} = entityise($hw->format($col,"plain",$c));
       }
@@ -444,6 +455,8 @@ sub makeprettyarray {
       $thisvariantno = $c->stash->{thispretty}->{_variantno} || "";
       $c->stash->{thispretty}->{'_variantno'} = $thisvariantno;
       $c->stash->{thispretty}->{'newvariantno'} = ($thisvariantno ne $lastvariantno) ? 1 : 0; 
+      $c->stash->{thispretty}->{'_majsense'} = $thismajsense;
+      $c->stash->{thispretty}->{'newmajsense'} = ($thismajsense ne $lastmajsense) ? 1 : 0;
       $c->stash->{thispretty}->{'newheadword'} = 1;
       push @{$prettyarray}, $c->stash->{thispretty};
    }
@@ -453,9 +466,10 @@ sub makeprettyarray {
 
 sub makesensestr {
    my $hw = shift;
-   my $s1 = $hw->variantno || 0;
-   my $s2 = $hw->majsense || 0;
-   my $ss = sprintf("%05d:%05d",$s1,$s2);
+   my $s1 = defined $hw->variantno? $hw->variantno : 0;
+   my $s2 = defined $hw->majsense ? $hw->majsense : 0;
+   my $s3 = defined $hw->minsense ? $hw->minsense : 0;
+   my $ss = sprintf("%05d:%05d:%05d",$s1,$s2,$s3);
    return $ss;
 #   return $hw->format("SENSE","plain");
 #   return (defined ($hw->variantno && $hw->variantno) ? $hw->variant : "") . ':' .

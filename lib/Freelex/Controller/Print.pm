@@ -108,7 +108,9 @@ sub detail : Path('detail') {
       if (defined $c->request->params->{'_detail'}) {   
       # print detail    
          my $lastvariantno;
-         my $thisvariantno = "";       
+         my $thisvariantno = "";
+         my $lastmajsense;
+         my $thismajsense = "";
          my $lastword;
          my $thisword = "";  
          my $entrygroups = [];
@@ -118,6 +120,9 @@ sub detail : Path('detail') {
             $lastvariantno = $thisvariantno;
             $thisvariantno = $r->variantno || "";
             $entry->{'newvariantno'} = ($thisvariantno ne $lastvariantno) ? 1 : 0;
+            $lastmajsense = $thismajsense;
+            $thismajsense = $r->majsense || "";
+            $entry->{'newmajsense'} = ($thismajsense ne $lastmajsense) ? 1 : 0;
             $lastword = $thisword;
             $thisword = $r->headword;
             if ($thisword ne $lastword) {
