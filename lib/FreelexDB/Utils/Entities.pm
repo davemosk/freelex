@@ -257,6 +257,7 @@ sub collatestring {
 	$str3 .= ' ';
 	my $str2 = lc $str3;
 	my $str = $str2;
+        $str =~ s/^\s*\([^\)]*\)\s*//; # get rid of anything in parenthesis on the left of the string
 	$str =~ tr/,()//d;
 	my @priresult = ();
 	my @secresult = ();
