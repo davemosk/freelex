@@ -23,7 +23,17 @@ __PACKAGE__->config->{authentication}->{dbic} = { user_class => __PACKAGE__ . ':
 
 __PACKAGE__->config->{static}->{ignore_extensions} 
         = [ qw/tmpl tt tt2 xhtml/ ]; # don't ignore html for FCKeditor
-        
+
+__PACKAGE__->config->{static}->{mime_types} = {
+        jpg => 'image/jpg',
+        png => 'image/png',
+    };
+
+__PACKAGE__->config->{static}->{include_path} = [
+            FreelexDB::Globals->template_dir,
+          __PACKAGE__->path_to( 'root' ) 
+    ];
+
 __PACKAGE__->config->{cookie_expires} = 0; # make cookies session-only
 
 __PACKAGE__->config->{session} = { expires=> 60*60*24*7, cookie_name => FreelexDB::Globals->db_name . '_session' }; # sessions can go a week if the browser can
