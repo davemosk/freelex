@@ -36,7 +36,7 @@ __PACKAGE__->config->{static}->{include_path} = [
 
 __PACKAGE__->config->{cookie_expires} = 0; # make cookies session-only
 
-__PACKAGE__->config->{session} = { expires=> 60*60*24*7, cookie_name => FreelexDB::Globals->db_name . '_session' }; # sessions can go a week if the browser can
+__PACKAGE__->config->{session} = { expires=> 60*60*24*7, cookie_name => FreelexDB::Globals->db_name . '_session', verify_address => 0 }; # sessions can go a week if the browser can
 
 __PACKAGE__->config('View::TT' => {
      INCLUDE_PATH => [ 
