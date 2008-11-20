@@ -64,8 +64,8 @@ sub sql : Path('sql') {
          foreach my $e (@$row) {
             if (!defined($e) || $e eq '') {push @NewRow, 'NULL' }
             elsif ($e eq '0') { push @NewRow, '0' }
-            if ($e =~ /.+\-(\d+)\b/) {
-               $e =~ s/(.+?\-(\d+))\b/qq(<a href="..\/headword\/display?_nav=no&_id=) . $2 . qq(" target="_new">) . entityise($1) . qq(<\/a>)/sge;
+            if ($e =~ /(?:^|(?=\s))\D+\-(\d+)(?:$|(?=\s))/) {
+               $e =~ s/(?:^|(?=\s))(\D+\-(\d+))(?:$|(?=\s))/qq(<a href="..\/headword\/display?_nav=no&_id=) . $2 . qq(" target="_new">) . entityise($1) . qq(<\/a>)/sge;
                push @NewRow, $e;
             }
             else { push @NewRow, entityise($e) }
