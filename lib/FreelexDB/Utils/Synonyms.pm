@@ -231,6 +231,7 @@ sub post_update_makememaster_proto {
    return unless $c->request->params->{$makemastername};
 
    my $searchcol = 'master'.$type.'headwordid';
+   return  unless defined($self->$searchcol) && $self->$searchcol;  # get out of here if we don't have a master
    my $oldmasterval = $self->$searchcol->headwordid;
    my $newmasterval = $self->headwordid;
 
