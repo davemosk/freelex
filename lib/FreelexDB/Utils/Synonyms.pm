@@ -181,7 +181,7 @@ sub ismaster {
 
 sub extractfinaldigits {
    my $x = shift || return;
-   (my $digits) = $x =~ /\-?(\d+)$/;
+   (my $digits) = $x =~ /\-?(\d+)/;
    return $digits;
 }
 
