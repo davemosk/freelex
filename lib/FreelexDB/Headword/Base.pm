@@ -13,7 +13,7 @@ package FreelexDB::Headword::Base;
   use FreelexDB::Utils::Mlmessage;
 
   
-  use Carp;
+  use Carp  qw(croak cluck);
   
   freelex_entities_init();
   use Data::Dumper;
@@ -60,6 +60,7 @@ sub format {
       #
 
       my $type = eval('&'.$format_func_type);
+      cluck "Error in function $format_func_type:" . $@      if $@;
       if ( my @tags = $type =~ /\s*\<([^\s\>]+)(?:\s|\>)/g) {
          $result =  entityise($type . $val) . '</' . join('></',reverse @tags) .  '>';
       }
@@ -81,14 +82,17 @@ sub format {
       my $format_func_name = 'format_' . $col . '_' . $formatmode;
       if (defined &$format_func_name) {
          my $ffnresult = eval('&'.$format_func_name.'($self,@other_args)');
-         if ($@) { croak "error in $format_func_name:" . $@ }
-         else { $result =  $ffnresult }
+         cluck "Error in function $format_func_name:" . $@      if $@;
+
+         $result =  $ffnresult || "";
 #      return $ffnresult;
       }
       elsif ($formatmode ne 'plain') {
          my $format_func_plain_name = 'format_' . $col . '_plain';
+
          if (defined &$format_func_plain_name) {
             $result =  eval('&'.$format_func_plain_name.'($self,@other_args)');
+            cluck "Error in function $format_func_plain_name:" . $@      if $@;
          }
          else {
             $result = $val
