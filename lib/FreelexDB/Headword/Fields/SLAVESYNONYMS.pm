@@ -2,6 +2,7 @@ sub format_SLAVESYNONYMS_plain {
    my $self = shift;
    return unless ref $self;
    my @synlist = ();
+   return unless $self->headwordid && $self->headwordid != 'new';
    foreach my $entry ( FreelexDB::Headword->search( mastersynonymheadwordid => $self->headwordid, { order_by => 'collateseq, variantno, majsense, minsense' } ) ) {
       push @synlist, $self->printedreference($entry->headwordid);
    }
