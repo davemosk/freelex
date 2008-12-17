@@ -53,7 +53,7 @@ sub display : Path('display') {
   elsif (my $writefailmsg = FreelexDB::Headword->no_write_access($c)) {
      $c->stash->{message} = $writefailmsg;
      $c->stash->{'dont_render_template'} = 1;
-     $c->redirect('display?_id='.$id.'&_message=' . $c->stash->{message});
+     $c->redirect('display?_id='.$id.'&_message=' . uri_escape_utf8($c->stash->{message}));
      return 0;
   } 
   else {
@@ -260,7 +260,7 @@ sub commit : Path('commit') {
   }
   else {  
      my $wfindicator = $c->stash->{workflow} ? '&_wf=1' : "";
-     $c->redirect('display?_id=' . $id . $wfindicator . '&_message=' . $c->{stash}->{message});
+     $c->redirect('display?_id=' . $id . $wfindicator . '&_message=' . uri_escape_utf8($c->{stash}->{message}));
      $c->stash->{'dont_render_template'} = 1; 
   }
   
