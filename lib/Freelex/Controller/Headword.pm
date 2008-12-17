@@ -114,7 +114,7 @@ sub commit : Path('commit') {
   if (my $writefailmsg = $h->no_write_access($c)) {
      $c->stash->{message} = entityise($writefailmsg,$c->request->headers->{'user-agent'});
      $c->stash->{'dont_render_template'} = 1;
-     $c->redirect('display?_id='.$id.'&_message=' . $c->stash->{message});
+     $c->redirect('display?_id='.$id.'&_message=' . uri_escape_utf8($c->stash->{message}));
      return 0;
   }
 
