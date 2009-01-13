@@ -24,6 +24,7 @@ sub begin : Private {
 
 sub freelex : Global {
    my ( $self, $c ) = @_;
+      FreelexDB::Matapunauser->commit;  # get rid of any in-train transactions ...
       my $uname = $c->user_object->matapunauser . ' - ' . $c->user_object->matapunauserfullname;
       $c->stash->{message} = $c->request->parameters->{_message};
       $c->stash->{motd} = entityise(mlmessage('welcome_to_matapuna',$c->user_object->lang,$c->stash->{system_name}));
