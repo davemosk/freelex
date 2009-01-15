@@ -45,13 +45,14 @@ sub sql : Path('sql') {
    $c->stash->{title} = mlmessage('report',$c->user_object->{'lang'});
 
    if ($report = $c->request->params->{"_report"}) {
-
+      FreelexDB::Activityjournal->dbi_commit;
       open(REPORT,$c->stash->{reports_dir} . '/' . $report . '.sql') || bail($c,"can't open report file $report: $!");
       my $sql = join("",<REPORT>);
       close(REPORT);
       my $dbh = FreelexDB::Headword->db_Main;
       my $sth = $dbh->prepare($sql) || bail($c,$sql . '<br>prepare<br>returned the following error:<br><br>' . $dbh->errstr);
       $sth->execute  || bail($c,$sql . '<br>execute<br>returned the following error:<br><br>' . $dbh->errstr);
+      FreelexDB::Activityjournal->dbi_commit;
       my @rows = ();
       my $title = entityise(mlmessage($report,$c->user_object->{'lang'}));
       push @result, '<b>' . $title . '</b><br><br>';
@@ -64,7 +65,7 @@ sub sql : Path('sql') {
          foreach my $e (@$row) {
             if (!defined($e) || $e eq '') {push @NewRow, 'NULL' }
             elsif ($e eq '0') { push @NewRow, '0' }
-            if ($e =~ /(?:^|(?=\s))\D+\-(\d+)(?:$|(?=\s))/) {
+            elsif ($e =~ /(?:^|(?=\s))\D+\-(\d+)(?:$|(?=\s))/) {
                $e =~ s/(?:^|(?=\s))(\D+\-(\d+))(?:$|(?=\s))/qq(<a href="..\/headword\/display?_nav=no&_id=) . $2 . qq(" target="_new">) . entityise($1) . qq(<\/a>)/sge;
                push @NewRow, $e;
             }
