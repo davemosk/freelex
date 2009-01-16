@@ -16,6 +16,11 @@ our $VERSION = '0.01';
 
 use FreelexDB::Globals;
 
+__PACKAGE__->config->{session} = {
+        storage => '/tmp/session-freelex-' . $FreelexDB::Globals->db_name() . '-' . $>;
+    };
+
+
 __PACKAGE__->config->{authentication}->{dbic} = { user_class => __PACKAGE__ . '::Model::FreelexDB::Matapunauser',
                       user_field => 'matapunauser',
                       password_field => 'password',
