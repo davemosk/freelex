@@ -16,8 +16,7 @@ our $VERSION = '0.01';
 
 use FreelexDB::Globals;
 
-__PACKAGE__->config->{session} = {
-        storage => '/tmp/session-freelex-' . $FreelexDB::Globals->db_name() . '-' . $>;
+__PACKAGE__->config->{session} = { storage => '/tmp/session-freelex-' . FreelexDB::Globals->db_name() . '-' . $>
     };
 
 
