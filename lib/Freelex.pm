@@ -16,10 +16,6 @@ our $VERSION = '0.01';
 
 use FreelexDB::Globals;
 
-__PACKAGE__->config->{session} = { storage => '/tmp/session-freelex-' . FreelexDB::Globals->db_name() . '-' . $>
-    };
-
-
 __PACKAGE__->config->{authentication}->{dbic} = { user_class => __PACKAGE__ . '::Model::FreelexDB::Matapunauser',
                       user_field => 'matapunauser',
                       password_field => 'password',
@@ -40,7 +36,13 @@ __PACKAGE__->config->{static}->{include_path} = [
 
 __PACKAGE__->config->{cookie_expires} = 0; # make cookies session-only
 
-__PACKAGE__->config->{session} = { expires=> 60*60*24*7, cookie_name => FreelexDB::Globals->db_name . '_session', verify_address => 0 }; # sessions can go a week if the browser can
+__PACKAGE__->config->{session} = { expires=> 60*60*24*7, 
+        cookie_name => FreelexDB::Globals->db_name . '_session',
+        storage => '/tmp/session-freelex-' . FreelexDB::Globals->db_name . '-' . $>
+    };
+
+
+        verify_address => 0 }; # sessions can go a week if the browser can
 
 __PACKAGE__->config('View::TT' => {
      INCLUDE_PATH => [ 
