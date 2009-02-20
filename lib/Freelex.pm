@@ -16,7 +16,7 @@ our $VERSION = '0.01';
 
 use FreelexDB::Globals;
 
-__PACKAGE__->config->{authentication}->{dbic} = { user_class => __PACKAGE__ . '::Model::FreelexDB::Matapunauser',
+__PACKAGE__->config->{authentication}->{dbic} = { user_class => 'FreelexDB::Matapunauser',
                       user_field => 'matapunauser',
                       password_field => 'password',
                       password_type => 'clear'   };
