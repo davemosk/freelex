@@ -29,6 +29,14 @@ sub freelex : Global {
       $c->stash->{message} = $c->request->parameters->{_message};
       $c->stash->{motd} = entityise(mlmessage('welcome_to_matapuna',$c->user_object->lang,$c->stash->{system_name}));
       $c->stash->{loggedinas} = entityise(mlmessage('logged_in_as',$c->user_object->lang,$uname));
+
+      $c->stash->{workq} = "";
+      my $wqnum;
+      eval { $wqnum = FreelexDB::Headword->sql_count_workq($c->user_object->matapunauserid)->select_val } ;	
+      if (!$@ && defined $wqnum && $wqnum) {
+         $c->stash->{workq} = entityise(mlmessage('workq_count',$c->user_object->lang,$wqnum))
+      }
+
       my $updated_today = FreelexDB::Headword->sql_count_updated_today->select_val;
       my $count_hw = FreelexDB::Headword->sql_count_all->select_val;
       my $distinct = FreelexDB::Headword->sql_count_distinct('headword')->select_val;

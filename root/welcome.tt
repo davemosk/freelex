@@ -17,6 +17,7 @@
 <br>
 [% loggedinas %]
 <br>
+[% IF workq %][% workq %]<br>[% END %]
 [% entrycount %]
 <br>
 [% support %]
