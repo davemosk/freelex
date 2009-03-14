@@ -46,12 +46,12 @@ sub sql : Path('sql') {
 
    if ($report = $c->request->params->{"_report"}) {
       FreelexDB::Activityjournal->dbi_commit;
-      open(REPORT,$c->stash->{reports_dir} . '/' . $report . '.sql') || bail($c,"can't open report file $report: $!");
+      open(REPORT,$c->stash->{reports_dir} . '/' . $report . '.sql') || bail($c,'',"can't open report file $report: $!");
       my $sql = join("",<REPORT>);
       close(REPORT);
-      my $dbh = FreelexDB::Headword->db_Main;
-      my $sth = $dbh->prepare($sql) || bail($c,$sql . '<br>prepare<br>returned the following error:<br><br>' . $dbh->errstr);
-      $sth->execute  || bail($c,$sql . '<br>execute<br>returned the following error:<br><br>' . $dbh->errstr);
+      my $dbh = getdbh($c);
+      my $sth = $dbh->prepare($sql) || bail($c,$dbh,$sql . '<br>prepare<br>returned the following error:<br><br>' . $dbh->errstr);
+      $sth->execute  || bail($c,$dbh,$sql . '<br>execute<br>returned the following error:<br><br>' . $dbh->errstr);
       FreelexDB::Activityjournal->dbi_commit;
       my @rows = ();
       my $title = entityise(mlmessage($report,$c->user_object->{'lang'}));
@@ -88,7 +88,7 @@ sub sql : Path('sql') {
 
    }
 
-   opendir(REPORTS,$c->stash->{reports_dir}) || bail($c,"can't read reports directory: $!");
+   opendir(REPORTS,$c->stash->{reports_dir}) || bail($c,'',"can't read reports directory: $!");
    my @repfiles = sort grep {/\.sql$/} readdir REPORTS;
    closedir(REPORTS);
 
@@ -117,13 +117,21 @@ sub end : Private {
 
 sub bail {
    my $c = shift;
+   my $dbh = shift;
    my $m = shift;
+   if ($dbh) { eval { $dbh->disconnect() } };
    $c->stash->{'message'} = mlmessage_block($m,$c->user_object->{lang});
    $c->stash->{template} = 'reports.tt';
    $c->forward('Freelex::View::TT');
    return 0;
 }
    
+sub getdbh {
+   my $c = shift;
+   my $dbh = DBI->connect("dbi:Pg:dbname=".FreelexDB::Globals->db_name,FreelexDB::Globals->db_user,FreelexDB::Globals->db_password) || bail($c,'',"Direct DBI connect failed");
+   $dbh->{pg_enable_utf8} = 1;
+   return $dbh;
+}
    
 
 1;
