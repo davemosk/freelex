@@ -75,6 +75,7 @@ sub sql : Path('sql') {
       }
       push @result, "</table><br>";
       push @result, $count . ' rows <br><br>';
+      if ($dbh) { eval { $dbh->disconnect() } };
       
       FreelexDB::Activityjournal->insert( {
               activitydate => $c->stash->{date},
