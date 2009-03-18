@@ -40,6 +40,9 @@ sub format_HEADWORDTAGS_form {
 sub validate_HEADWORDTAGS {
    my $self = shift;
    my $c = shift || return ();
+   return ()  unless (exists &{"FreelexDB::Globals::tags_should_have_at_least_one"} &&
+                  defined FreelexDB::Globals->tags_should_have_at_least_one &&
+                  FreelexDB::Globals->tags_should_have_at_least_one);
    return ()  if $c->request->{parameters}->{tagid};
    return ()  if $self->headwordtags;
    return ('__mlmsg_should_have_at_least_one_tag__');
