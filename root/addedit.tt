@@ -43,7 +43,7 @@
 [% IF workflow %]
 <input name="_nextwf" type="submit" value="[% wf_next_entry %]">
 [% END %] 
-[% IF id != "new" %]
+[% IF id != "new" && enable_delete_button_data_entry %]
 <input name="_delete" type="submit" value="delete">
 [% END %]
 </td></tr>

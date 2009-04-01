@@ -28,6 +28,7 @@ sub begin : Private {
      $c->stash->{date} = localtime;
      $c->stash->{workflow} = $c->request->params->{'_wf'} || 0;
      $c->stash->{wf_next_entry} = entityise(mlmessage('wf_next_entry',$c->user_object->{lang}));
+     $c->stash->{enable_delete_button_data_entry} = FreelexDB::Globals->enable_delete_button_data_entry;
   }
 }
 

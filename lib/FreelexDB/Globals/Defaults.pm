@@ -45,5 +45,6 @@ sub wordclass_join_char { ',' }
 
 sub lifecycle_complete { 4000 }
 
+sub enable_delete_button_data_entry { 1 }
 
 1;
