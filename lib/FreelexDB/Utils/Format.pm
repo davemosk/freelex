@@ -81,7 +81,7 @@ sub fldropdown {
         
         push @result, '<select name="' . $valuecol . '"' . $multiple . '>';
         
-        foreach my $label (sort keys %ddvalues) {
+        foreach my $label (sort { lc $a cmp lc $b } keys %ddvalues) {
            my $selected = "";
            if ($default) {
               if (ref $default) {
