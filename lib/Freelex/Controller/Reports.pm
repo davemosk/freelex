@@ -105,7 +105,7 @@ sub sql : Path('sql') {
    push @result, qq(<input type="hidden" name="_func" value="reports">);
    push @result, qq(<input type="submit" name="generate_report" value=") . mlmessage('generate_report',$c->user_object->{lang}) . qq(">);
    push @result, qq(</form>);
-   $c->stash->{results} = join("",@result);
+   $c->stash->{results} = mlmessage_block(join("",@result),$c->user_object->{lang});
    $c->stash->{template} = 'reports.tt';
    $c->detach('Freelex::View::TT')
     
