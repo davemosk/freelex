@@ -38,7 +38,7 @@ sub search : Path('/search') {
       my $whereclause;
       my $lowertext = $c->request->params->{'_text'} ? " '%" . lc(utfise($c->request->params->{'_text'})) . "%' " : "";
       my $include = $c->request->params->{'_include'} || "";
-      if ($include eq 'other') {
+      if ($include eq 'other' && $lowertext) {
          $whereclause = " WHERE ( headword ILIKE " . $lowertext;
          foreach my $otherfield (@{Freelex::Model::FreelexDB::Headword->search_include_other_cols}) {  
             $whereclause .= ' OR ' . $otherfield . " ILIKE " . $lowertext
