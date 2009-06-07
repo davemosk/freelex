@@ -51,7 +51,8 @@ sub search : Path('/search') {
          $whereclause = $lowertext ? (" WHERE ( headword ILIKE " . FreelexDB::DBI->db_Main->quote(lc(utfise($c->request->params->{'_text'}))) . ") ") : "";
       }
       if ($c->request->params->{'matapunauserid'} ne 'dropdown-first') {
-         $whereclause = ($whereclause ? $whereclause . ' AND ' : " WHERE ") . ' (createuserid=' . $c->request->params->{'matapunauserid'} . ' OR updateuserid=' . $c->request->params->{'matapunauserid'} . ' OR owneruserid=' . $c->request->params->{'matapunauserid'} . ')';
+         my $useridclause = ' (createuserid=' . $c->request->params->{'matapunauserid'} . ' OR updateuserid=' . $c->request->params->{'matapunauserid'} . ' OR owneruserid=' . $c->request->params->{'matapunauserid'} . ')';
+         $whereclause = ($whereclause ? $whereclause . ' AND ' : " WHERE ") . ' ( ' . $useridclause . ' OR headwordid IN (SELECT DISTINCT headwordid FROM hwarchive WHERE ' . $useridclause . ') ) '; 
       }
       
       if ($c->request->params->{'categoryid'} && $c->request->params->{'categoryid'} ne 'dropdown-first') {
