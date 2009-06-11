@@ -77,7 +77,7 @@ sub display : Path('display') {
 
   unless ($id eq 'new') {
      foreach my $col (@{FreelexDB::Headword->display_order_print}) {  
-        $c->stash->{thispretty}->{$col} = entityise($h->format(trim($col),"plain"));
+        $c->stash->{thispretty}->{$col} = entityise(mlmessage_block($h->format(trim($col),"plain"),$c->user_object->lang));
      }
      $c->stash->{thispretty}->{_variantno} = $h->variantno   if ((defined $h->variantno) && $h->variantno);
      $c->stash->{thispretty}->{_majsense} = $h->majsense   if ((defined $h->majsense) && $h->majsense);
