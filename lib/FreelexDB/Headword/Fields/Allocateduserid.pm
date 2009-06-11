@@ -42,6 +42,7 @@ sub pre_update_allocateduserid {
   }
   else {
      $self->set("sentbyuserid",$c->user_object->matapunauserid);
+     $self->set("workqueueposition",1);
   }
 }
 
