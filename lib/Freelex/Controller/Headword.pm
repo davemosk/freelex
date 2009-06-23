@@ -40,6 +40,7 @@ sub display : Path('display') {
   $c->stash->{template} = 'addedit.tt';
   $c->stash->{display_order} = Freelex::Model::FreelexDB::Headword->display_order_form;
   my $id = $c->request->params->{'_id'};
+  $id = 'new'   unless $id;
   $c->stash->{id} = $id;
   if ($id ne 'new') {
      $h = Freelex::Model::FreelexDB::Headword->retrieve($id);
