@@ -108,7 +108,7 @@ sub fldropdown {
 sub getfieldnamefromformatsub  {
    my @caller = caller(1);
    my $subname = $caller[3];
-   (my $fieldname) = $subname =~ /\:\:format_([^_]+)/;
+   (my $fieldname) = $subname =~ /\:\:format_(.*?)(?:_[^_]+)?$/;
    return $fieldname;
 }
 
