@@ -385,7 +385,7 @@ sub history : Path('history') {
 
 sub myediting : Path('myediting') {
    my( $self, $c ) = @_;
-   if ( defined FreelexDB::Headword->sql_all_wf ) {
+   if ( defined FreelexDB::Headword->workflow_list_cols ) {
       my $wfitems = [];
       my @wfhits = FreelexDB::Headword->sth_to_objects(FreelexDB::Headword->sql_next_wf($c->user_object->{matapunauserid}));
       unless (@wfhits) {
@@ -394,9 +394,13 @@ sub myediting : Path('myediting') {
 	$c->redirect($finished_redirect);
 	return 0;
       }
+      
       foreach my $wfhit (@wfhits) {
-         my $sentby = $wfhit->sentbyuserid ? $wfhit->sentbyuserid->matapunauser : "";
-         push @$wfitems, {headword => $wfhit->headword, headwordid => $wfhit->headwordid, sentby => $sentby, definition => $wfhit->definition, gloss => $wfhit->gloss };
+         my $pretty = {};
+         foreach my $col (@{FreelexDB::Headword->workflow_list_cols}) {   
+             $pretty->{$col} = entityise($wfhit->format($col,"plain",$c));
+          }
+         push @$wfitems, $pretty;
       }
       $c->stash->{wfitems} = $wfitems;
       $c->stash->{template} = 'workflowlist.tt';
