@@ -385,9 +385,29 @@ sub history : Path('history') {
 
 sub myediting : Path('myediting') {
    my( $self, $c ) = @_;
-   $c->stash->{dont_render_template} = 1; 
-   do_workflow($c);
-   return 0;
+   if ( defined FreelexDB::Headword->sql_all_wf ) {
+      my $wfitems = [];
+      my @wfhits = FreelexDB::Headword->sth_to_objects(FreelexDB::Headword->sql_next_wf($c->user_object->{matapunauserid}));
+      unless (@wfhits) {
+        $c->stash->{dont_render_template} = 1; 
+	my $finished_redirect = '../freelex?_message=' . uri_escape_utf8(mlmessage('no_more_work_today'));
+	$c->redirect($finished_redirect);
+	return 0;
+      }
+      foreach my $wfhit (@wfhits) {
+         my $sentby = $wfhit->sentbyuserid ? $wfhit->sentbyuserid->matapunauser : "";
+         push @$wfitems, {headword => $wfhit->headword, headwordid => $wfhit->headwordid, sentby => $sentby, definition => $wfhit->definition, gloss => $wfhit->gloss };
+      }
+      $c->stash->{wfitems} = $wfitems;
+      $c->stash->{template} = 'workflowlist.tt';
+   }
+
+   else {
+      $c->stash->{dont_render_template} = 1; 
+      do_workflow($c);
+      return 0;
+   }
+
 }
 
 sub end : Private {

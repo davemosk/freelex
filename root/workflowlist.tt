@@ -1,0 +1,23 @@
+<html>
+<head>
+<title>[% system_name %] [% title %]</title>
+<STYLE TYPE="text/css">
+  BODY, H1, P, TD, INPUT, SELECT, TEXTAREA { font-family: "Lucida Grande", "Lucida Sans Unicode", "Arial Unicode MS", Helvetica, Arial, sans-serif }
+  TT {font-family: "Courier CE", "Courier New", "Luxi Mono", monospace; font-size: small}
+</STYLE>
+</head>
+<body bgcolor="ffffff">
+[% INCLUDE navl2.inc %]
+<br>
+[% IF message %]
+<font color="red"><b>[% message %]</b></font>
+[% END %]
+<table cellpadding="0" cellspacing="0" border="0">
+[% FOREACH wfitems %]
+<tr><td><a href="display?_id=[% headwordid %]">[% headword %]-[%headwordid %]</a> [% IF sentby %]([% sentby %])[% END %] [% gloss %] [% definition %]</td></tr>
+[% END %]
+</table>
+<br>
+[% INCLUDE navl2.inc %]
+</body>
+</html>
