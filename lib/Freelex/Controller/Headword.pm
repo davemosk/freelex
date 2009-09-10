@@ -387,7 +387,7 @@ sub myediting : Path('myediting') {
    my( $self, $c ) = @_;
    if ( defined FreelexDB::Headword->workflow_list_cols ) {
       my $wfitems = [];
-      my @wfhits = FreelexDB::Headword->sth_to_objects(FreelexDB::Headword->sql_next_wf($c->user_object->{matapunauserid}));
+      my @wfhits = FreelexDB::Headword->sth_to_objects(FreelexDB::Headword->sql_all_wf($c->user_object->{matapunauserid}));
       unless (@wfhits) {
         $c->stash->{dont_render_template} = 1; 
 	my $finished_redirect = '../freelex?_message=' . uri_escape_utf8(mlmessage('no_more_work_today'));
