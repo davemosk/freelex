@@ -58,13 +58,12 @@ sub sql : Path('sql') {
       my @rows = ();
       my $title = entityise(mlmessage($report,$c->user_object->{'lang'}));
 
-      push @result, '<b>' . $title . '</b><br><br>';
-      push @result, qq(<table border="1" cellpadding="2" cellspacing="2">\n<tr><td><b>);
-      push @result, join("</b></td><td><b>", @{$sth->{NAME}}) . "</b></td></tr>\n";
+
       my $count = 0;
 
       my @csvdata = ();
       if ($format eq 'csv') {
+         push @csvdata, $sth->{NAME};
          while (my $csvr = $sth->fetchrow_arrayref) {
             my @csvrow = ();
             foreach my $csvc (@$csvr) {
@@ -79,6 +78,11 @@ sub sql : Path('sql') {
 #
 # otherwise, it's a normal HTML report
 #
+
+      push @result, '<b>' . $title . '</b><br><br>';
+      push @result, qq(<table border="1" cellpadding="2" cellspacing="2">\n<tr><td><b>);
+      push @result, join("</b></td><td><b>", @{$sth->{NAME}}) . "</b></td></tr>\n";
+
 
       while(my $row = $sth->fetchrow_arrayref) {
          $count++;
