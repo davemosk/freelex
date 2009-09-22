@@ -42,6 +42,8 @@ sub sql : Path('sql') {
    my $whereclause;
    my @result = ();
    my $report;
+   my $format = (defined $c->request->params->{"_format"} && $c->request->params->{"_format"} && $c->request->params->{"_format"} eq 'csv') ? "csv" : "html";
+
    $c->stash->{title} = mlmessage('report',$c->user_object->{'lang'});
 
    if ($report = $c->request->params->{"_report"}) {
@@ -55,10 +57,29 @@ sub sql : Path('sql') {
       FreelexDB::Activityjournal->dbi_commit;
       my @rows = ();
       my $title = entityise(mlmessage($report,$c->user_object->{'lang'}));
+
       push @result, '<b>' . $title . '</b><br><br>';
       push @result, qq(<table border="1" cellpadding="2" cellspacing="2">\n<tr><td><b>);
       push @result, join("</b></td><td><b>", @{$sth->{NAME}}) . "</b></td></tr>\n";
       my $count = 0;
+
+      my @csvdata = ();
+      if ($format eq 'csv') {
+         while (my $csvr = $sth->fetchrow_arrayref) {
+            my @csvrow = ();
+            foreach my $csvc (@$csvr) {
+               push @csvrow, mlmessage_block($csvc,$c->user_object->{lang});
+            }
+            push @csvdata, \@csvrow;
+         }
+         $c->stash->{'csv'} = { data => \@csvdata };
+#         $c->stash->{'csv'} = { data => $sth->fetchall_arrayref };
+         $c->detach('Freelex::View::Download::CSV');
+      }
+#
+# otherwise, it's a normal HTML report
+#
+
       while(my $row = $sth->fetchrow_arrayref) {
          $count++;
          my @NewRow = ();
@@ -102,6 +123,7 @@ sub sql : Path('sql') {
       push @result, qq(<option value=") . $repfile . qq(">) . mlmessage($repfile,$c->user_object->{'lang'}) . qq(</option>);
    }
    push @result, qq(</select><br>);
+   push @result, mlmessage('format',$c->user_object->{'lang'}) . qq(:&nbsp;<input name="_format" type="radio" value="html" checked>HTML&nbsp;&nbsp;&nbsp;&nbsp;<input name="_format" type="radio" value="csv">CSV<br>);
    push @result, qq(<input type="hidden" name="_func" value="reports">);
    push @result, qq(<input type="submit" name="generate_report" value=") . mlmessage('generate_report',$c->user_object->{lang}) . qq(">);
    push @result, qq(</form>);
