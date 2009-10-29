@@ -39,10 +39,15 @@
 [% BLOCK submit_buttons %]
 [% IF user_object.canupdate %]
 <tr><td></td><td></td><td>
+[% IF NOT cloning %]
 <input type="submit" value="save">
+[% END %]
 [% IF workflow %]
 <input name="_nextwf" type="submit" value="[% wf_next_entry %]">
 [% END %] 
+[% IF clonable %]
+<input name="_clone" type="submit" value="[% clone %]">
+[% END %]
 [% IF id != "new" && enable_delete_button_data_entry %]
 <input name="_delete" type="submit" value="delete">
 [% END %]

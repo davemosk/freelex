@@ -42,6 +42,13 @@ sub display : Path('display') {
   my $id = $c->request->params->{'_id'};
   $id = 'new'   unless $id;
   $c->stash->{id} = $id;
+
+  $c->stash->{clonable} = 0;
+  if ($id ne 'new' && defined FreelexDB::Globals->enable_cloning && FreelexDB::Globals->enable_cloning) {
+     $c->stash->{clonable} = 1;
+     $c->stash->{clone} = xlateit('__mlmsg_clone__',$c->user_object->lang,$c->request->headers->{'user-agent'});
+  }
+
   if ($id ne 'new') {
      $h = Freelex::Model::FreelexDB::Headword->retrieve($id);
      $c->stash->{title} = mlmessage('edit_headword',$c->user_object->lang,$c->request->headers->{'user-agent'}) . entityise($h->hyphenated);  
@@ -58,9 +65,7 @@ sub display : Path('display') {
      $c->redirect('display?_id='.$id.'&_message=' . uri_escape_utf8($c->stash->{message}));
      return 0;
   } 
-  else {
-    $c->stash->{title} = mlmessage('add_headword',$c->user_object->lang,$c->request->headers->{'user-agent'});
-  }  
+
   $c->stash->{fields} = {};
   $c->stash->{warnings} = {};
   foreach my $col (@{$c->stash->{display_order}}) {  
@@ -98,8 +103,17 @@ sub commit : Path('commit') {
   my $ignore_warnings = $c->request->params->{'_ignorewarn'} || 0;
   
   my $h;
+
+  $c->stash->{cloning} = $c->request->params->{_clone} || 0;
+
+  $c->stash->{clonable} = 0;
+  if ($id ne 'new' && defined FreelexDB::Globals->enable_cloning && FreelexDB::Globals->enable_cloning) {
+     $c->stash->{clonable} = 1;
+     $c->stash->{clone} = xlateit('__mlmsg_clone__',$c->user_object->lang,$c->request->headers->{'user-agent'});
+  }
+
   
-  if ($id eq 'new') {
+  if ($id eq 'new' || $c->request->params->{_clone}) {
      $h = Freelex::Model::FreelexDB::Headword->construct( {} )
   }
   else {
@@ -202,7 +216,7 @@ sub commit : Path('commit') {
 #  }
 
    
-  if (defined $h->headwordid) { 
+  if (defined $h->headwordid && !($c->request->params->{_clone})) { 
   
      #
      # Update the row
@@ -228,7 +242,7 @@ sub commit : Path('commit') {
      $id = $h->headwordid;
      $c->stash->{id} = $id;
      $c->stash->{message} = mlmessage_block("__mlmsg_successfully_added__::headword::" . $h->hyphenated . '__');
-     $c->stash->{verb} = 'add';
+     $c->stash->{verb} = $c->request->params->{_clone} ? 'clone' : 'add';
 
   }
   # do any required post-update processing
@@ -254,6 +268,12 @@ sub commit : Path('commit') {
   # finish up
   #  
   $h->dbi_commit;
+
+  if ($c->request->params->{_clone}) {
+#
+# Copy assets, tags, and add editorial comment about cloned origin
+#
+  }
   
   if ($c->request->params->{'_nextwf'}) {
     $c->stash->{'dont_render_template'} = 1; 
