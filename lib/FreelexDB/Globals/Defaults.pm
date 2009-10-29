@@ -36,6 +36,7 @@ sub print_enable_xref { 0 }
 sub enable_categories { 0 }
 sub enable_tags { 1 }
 sub enable_search_and_replace { 0 }
+sub enable_cloning { 0 }
 
 sub master_synonym_ref_chars { ['&#9654;',''] }
 sub master_variant_ref_char { ['=',''] }
@@ -46,5 +47,6 @@ sub wordclass_join_char { ',' }
 sub lifecycle_complete { 4000 }
 
 sub enable_delete_button_data_entry { 1 }
+
 
 1;
