@@ -112,9 +112,9 @@ sub commit : Path('commit') {
      $c->stash->{clone} = xlateit('__mlmsg_clone__',$c->user_object->lang,$c->request->headers->{'user-agent'});
   }
 
-##  if ($c->stash->{cloning}) {  
-##     $c->stash->{clonedfrom} = $c->request->params->{_clonedfrom} || 0; 
-##  }
+  if ($c->stash->{cloning}) {  
+     $c->stash->{clonedfrom} = $c->request->params->{_clonedfrom} || 0; 
+  }
   
   if ($id eq 'new' || $c->request->params->{_clone}) {
      $h = Freelex::Model::FreelexDB::Headword->construct( {} )
