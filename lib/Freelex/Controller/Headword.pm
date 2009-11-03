@@ -112,6 +112,9 @@ sub commit : Path('commit') {
      $c->stash->{clone} = xlateit('__mlmsg_clone__',$c->user_object->lang,$c->request->headers->{'user-agent'});
   }
 
+##  if ($c->stash->{cloning}) {  
+##     $c->stash->{clonedfrom} = $c->request->params->{_clonedfrom} || 0; 
+##  }
   
   if ($id eq 'new' || $c->request->params->{_clone}) {
      $h = Freelex::Model::FreelexDB::Headword->construct( {} )
@@ -270,9 +273,9 @@ sub commit : Path('commit') {
   $h->dbi_commit;
 
   if ($c->request->params->{_clone}) {
-#
-# Copy assets, tags, and add editorial comment about cloned origin
-#
+     foreach my $col (FreelexDB::Headword->all_columns, FreelexDB::Headword->columns("TEMP"),FreelexDB::Headword->pseudo_cols) {
+        $h->clone($col,$c)
+     }
   }
   
   if ($c->request->params->{'_nextwf'}) {

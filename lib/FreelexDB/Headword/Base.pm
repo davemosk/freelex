@@ -235,6 +235,15 @@ sub postupdate {
 }
          
 
+sub clone {
+   my ($self, $col, $c) = @_;
+   my $post_update_sub_name = 'clone_' . $col;   
+   if (defined &$post_update_sub_name) {
+      $self->$post_update_sub_name($c);
+   }
+}
+
+
 sub use_headword_fields {
    my @dir = FreelexDB::Globals->headword_fields_dir();
    my %loaded = ();
