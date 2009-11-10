@@ -408,7 +408,7 @@ sub history : Path('history') {
 
 sub myediting : Path('myediting') {
    my( $self, $c ) = @_;
-   if ( defined FreelexDB::Headword->workflow_list_cols ) {
+   if ( FreelexDB::Headword->can('workflow_list_cols') ) {
       my $wfitems = [];
       my @wfhits = FreelexDB::Headword->sth_to_objects(FreelexDB::Headword->sql_all_wf($c->user_object->{matapunauserid}));
       unless (@wfhits) {
