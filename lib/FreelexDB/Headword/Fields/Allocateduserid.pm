@@ -34,9 +34,8 @@ sub pre_update_allocateduserid {
      return;
   }
   # return it to "the pool" if:
-  #  - we're sending it to ourselves, or
-  #  - we've intercepted an entry in someone's general queue
-  if (($self->allocateduserid eq $c->user_object->matapunauserid) || (defined $self->workqueueposition && $self->workqueueposition >= 100)) {
+  #  - we're sending it to ourselves
+  if ($self->allocateduserid eq $c->user_object->matapunauserid)  {
      $self->set("allocateduserid",undef);
      $self->set("sentbyuserid",undef);
   }
