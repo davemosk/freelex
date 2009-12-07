@@ -25,6 +25,7 @@ sub begin : Private {
      $c->stash->{user_object} = $c->user_object;
      $c->stash->{display_nav} = 1  unless defined $c->request->params->{'_nav'} && $c->request->params->{'_nav'} eq 'no';
      $c->stash->{fckpath} = FreelexDB::Globals->fckeditor_path;  
+     $c->stash->{jqpath} = FreelexDB::Globals->jquery_path;
      $c->stash->{date} = localtime;
      $c->stash->{workflow} = $c->request->params->{'_wf'} || 0;
      $c->stash->{wf_next_entry} = entityise(mlmessage('wf_next_entry',$c->user_object->{lang}));

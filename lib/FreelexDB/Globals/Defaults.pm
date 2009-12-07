@@ -24,6 +24,8 @@ sub print_allow_xref { 0 };
 sub fckeditor_path { '../static/FCKeditor' }
 sub fckeditor_height { 200 };
 
+sub jquery_path { '../static/jquery' }
+
 sub search_default_type { "" }
 sub search_select_category { "" }
 sub search_select_tag      { "" }
