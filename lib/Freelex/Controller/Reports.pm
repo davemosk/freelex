@@ -90,8 +90,8 @@ sub sql : Path('sql') {
          foreach my $e (@$row) {
             if (!defined($e) || $e eq '') {push @NewRow, 'NULL' }
             elsif ($e eq '0') { push @NewRow, '0' }
-            elsif ($e =~ /\-(\d+)(?:$|(?=\s))/) {
-               $e =~ s/\-(\d+)(?:$|(?=\s))/qq(-<a href="..\/headword\/display?_nav=no&_id=) . $1 . qq(" target="_new">) . entityise($1) . qq(<\/a>)/sge;
+            elsif ($e =~ /\-(\d+)(?:$|(?=\s)|(?=\@))/) {
+               $e =~ s/\-(\d+)(?:$|(?=\s)|(?=\@))/qq(-<a href="..\/headword\/display?_nav=no&_id=) . $1 . qq(" target="_new">) . entityise($1) . qq(<\/a>)/sge;
                push @NewRow, $e;
             }
             else { push @NewRow, entityise($e) }
