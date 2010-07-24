@@ -32,6 +32,7 @@ sub begin : Private {
      $c->stash->{print_prompt} = entityise(mlmessage('print',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
      $c->stash->{tag_prompt} = entityise(mlmessage('headwordtags',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
      $c->stash->{category_prompt} = entityise(mlmessage('category',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
+     $c->stash->{print_qa_only_prompt} = entityise(mlmessage('print_qa_only',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
      $c->stash->{date} = localtime;
      $c->stash->{print_enable_xref} = FreelexDB::Globals->print_enable_xref || 0;
      $c->stash->{wordclass_join_char} = FreelexDB::Globals->wordclass_join_char;
@@ -45,6 +46,7 @@ sub detail : Path('detail') {
     
   $c->stash->{message} = entityise(utfise(($c->request->params->{'_message'})))   if defined $c->request->params->{'_message'}; 
   $c->stash->{display_order} = Freelex::Model::FreelexDB::Headword->display_order_print;
+  $c->stash->{print_qa_only} = $c->request->params->{'_qa_only'};
   
   if (!defined $c->request->params->{'_detail'}  && (!$c->stash->{print_enable_xref} || !defined $c->request->params->{'_xref'})) {
      # 
@@ -59,6 +61,13 @@ sub detail : Path('detail') {
      if (FreelexDB::Globals->enable_categories) {
        my $catdefault = $c->request->params->{categoryid} || 'dropdown-first';
        $c->stash->{categorybox} =  xlateit(fldropdown('category','categoryid','category',$catdefault,'__mlmsg_any_category__'),$c->user_object->{'lang'},$c->request->headers->{'user-agent'},"form");
+     }
+
+     if (FreelexDB::Globals->can('print_qa_test') && FreelexDB::Globals->print_qa_test ) {
+        $c->stash->{print_qa_only_box} = 1;
+     }
+     else {
+        $c->stash->{print_qa_only_box} = 0;
      }
 
      $c->stash->{template} = 'printdetailreqform.tt';
@@ -97,6 +106,10 @@ sub detail : Path('detail') {
 
       if (FreelexDB::Globals->enable_categories && $c->request->params->{categoryid} && ($c->request->params->{categoryid} ne 'dropdown-first')) {
         push @subclauses, ' categoryid = ' . $c->request->params->{categoryid};
+      }
+
+      if ( $c->stash->{print_qa_only} && (FreelexDB::Globals->can('print_qa_test') && FreelexDB::Globals->print_qa_test )) {
+        push @subclauses, FreelexDB::Globals->print_qa_test;
       }
       
       my $whereclause = join(' AND ',@subclauses); 

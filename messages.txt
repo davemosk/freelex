@@ -251,3 +251,4 @@ no_write_access	You do not have write access to the database	You do not have wri
 variantno	Sense
 enter_some_search_criteria	Please enter some search criteria	Please enter some search criteria
 symbol	Tohu	Tohu
+print_qa_only	Only print QA'd entries	Only print QA'd entries

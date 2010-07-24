@@ -35,6 +35,7 @@ sub qa_levels { 0 };
 sub character_hacks { return undef };
 
 sub print_enable_xref { 0 }
+sub print_qa_test { '' }
 sub enable_categories { 0 }
 sub enable_tags { 1 }
 sub enable_search_and_replace { 0 }

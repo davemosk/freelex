@@ -20,6 +20,7 @@
    <input type="text" name="_end" size="20"><br></td></tr>
 [% IF tagbox %]<tr><td>[% tag_prompt %]</td><td></td><td>[% tagbox %]<br></td></tr>[% END %]
 [% IF categorybox %]<tr><td>[% category_prompt %]</td><td></td><td>[% categorybox %]<br></td></tr>[% END %]
+[% IF print_qa_only_box %]<tr><td><input type="checkbox" name="_qa_only" value="1"  [% IF print_qa_only %] CHECKED [% END %]> [% print_qa_only_prompt %]</td></tr>[% END %]
 </table>
 <input type="hidden" name="_format" value="html">
    <input type="hidden"
