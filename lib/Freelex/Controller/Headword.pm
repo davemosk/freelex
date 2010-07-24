@@ -467,7 +467,7 @@ sub makeprettyarray {
    my $thismajsense = "";
    $c->stash->{thisprinted} = 0;
    $c->stash->{wordclass_join_char} = FreelexDB::Globals->wordclass_join_char;
-   my @headwords = FreelexDB::Headword->search(  headword => $headword, { order_by => 'variantno, majsense, minsense' } );
+   my @headwords = FreelexDB::Headword->search(  headword => $headword, { order_by => "coalesce(variantno,0), coalesce(nullif(majsense,''),'0'), coalesce(nullif(minsense,''),'0')" } );
    foreach my $hw (@headwords) {
       next if $hw->{headwordid} == $c->stash->{id};
       my $pretty = {};
