@@ -36,7 +36,9 @@ sub pre_update_SECONDARYWORDCLASS {
    my $c = shift;
    foreach my $wordclass  (FreelexDB::Wordclass->search( canbesecondary => 't', { order_by => 'wordclass' }  )) {
       my $wcsmethod = 'wcs' . $wordclass->wordclassid;
-      $self->set($wcsmethod,0)    unless $c->request->parameters->{$wcsmethod};
+      if (exists $c->request->parameters->{$wcsmethod}  && !$c->request->parameters->{$wcsmethod}) {
+         $self->set($wcsmethod,0)
+      }
    }
 }
 

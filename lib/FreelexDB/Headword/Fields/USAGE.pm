@@ -35,7 +35,9 @@ sub pre_update_USAGE {
    my $c = shift;
    foreach my $usage  (FreelexDB::Usage->retrieve_all) {
       my $usagemethod = 'usage' . $usage->usageid;
-      $self->set($usagemethod,0)    unless $c->request->parameters->{$usagemethod};
+      if (exists $c->request->parameters->{$usagemethod}  && !$c->request->parameters->{$usagemethod}) {
+         $self->set($usagemethod,0);
+      }
    }
 }
 
