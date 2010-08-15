@@ -33,11 +33,10 @@ sub format_USAGE_plain {
 sub pre_update_USAGE {
    my $self = shift;
    my $c = shift;
+   return unless $c->request->parameters->{'_process_usage'};
    foreach my $usage  (FreelexDB::Usage->retrieve_all) {
       my $usagemethod = 'usage' . $usage->usageid;
-      if (exists $c->request->parameters->{$usagemethod}  && !$c->request->parameters->{$usagemethod}) {
-         $self->set($usagemethod,0);
-      }
+      $self->set($usagemethod,0)   unless $c->request->parameters->{$usagemethod};
    }
 }
 

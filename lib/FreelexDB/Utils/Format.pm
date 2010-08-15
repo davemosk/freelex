@@ -41,7 +41,8 @@ sub flcheckbox {
    my $s = shift || "";
    my $checked = $s ? " CHECKED" : "";
 
-   my $flt = '<input type="checkbox" name="'.$name.'" value="'.$val.'"' . $checked . '>';
+   my $flt = '<input type="checkbox" name="'.$name.'" value="'.$val.'"' . $checked . '>' .
+             '<input type="hidden" name="_process_' . $name . '" value="1">';
    return $flt;
 }
 
@@ -119,6 +120,7 @@ sub makecheckboxtable {
 	if ($tvalues) {
 		my $wcsrnum = 0;
 		my @wcsrtable = ();
+		push @wcsrtable, '<input type="hidden" name="_process_' . $type . '" value="1">';
 		push @wcsrtable, '<table>';
 		foreach my $wcsr (sort keys %{$tvalues}) {
 			$wcsrnum++;

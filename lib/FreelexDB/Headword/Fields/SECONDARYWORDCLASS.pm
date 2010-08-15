@@ -34,11 +34,10 @@ sub format_SECONDARYWORDCLASS_plain {
 sub pre_update_SECONDARYWORDCLASS {
    my $self = shift;
    my $c = shift;
+   return unless $c->request->parameters->{'_process_wcs'};
    foreach my $wordclass  (FreelexDB::Wordclass->search( canbesecondary => 't', { order_by => 'wordclass' }  )) {
       my $wcsmethod = 'wcs' . $wordclass->wordclassid;
-      if (exists $c->request->parameters->{$wcsmethod}  && !$c->request->parameters->{$wcsmethod}) {
-         $self->set($wcsmethod,0)
-      }
+      $self->set($wcsmethod,0)   unless $c->request->parameters->{$wcsmethod};
    }
 }
 
