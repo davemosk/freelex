@@ -31,6 +31,7 @@ sub pre_update_allocateduserid {
   if ($self->allocateduserid eq 'dropdown-first') {
      $self->set("allocateduserid",undef);
      $self->set("sentbyuserid",undef);
+     $self->set("workqueueposition",undef);
      return;
   }
   # return it to "the pool" if:
@@ -38,6 +39,7 @@ sub pre_update_allocateduserid {
   if ($self->allocateduserid eq $c->user_object->matapunauserid)  {
      $self->set("allocateduserid",undef);
      $self->set("sentbyuserid",undef);
+     $self->set("workqueueposition",undef);
   }
   else {
      $self->set("sentbyuserid",$c->user_object->matapunauserid);
