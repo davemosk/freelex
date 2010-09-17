@@ -20,7 +20,7 @@ sub fltextarea {
 
    my $rows = shift || FreelexDB::Globals->textarearows;
    my $cols = shift || FreelexDB::Globals->textareacols;
-   my $flt = '<textarea name="'.$name.'" rows="'.$rows.'" cols="'.$cols.'">'.$val.'</textarea>';
+   my $flt = '<textarea name="'.$name.'" id="'.$name.'" rows="'.$rows.'" cols="'.$cols.'">'.$val.'</textarea>';
    return $flt;
 }
 
