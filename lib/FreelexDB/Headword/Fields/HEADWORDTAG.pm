@@ -52,6 +52,8 @@ sub post_update_HEADWORDTAGS {
    my $self = shift;
    my $c = shift;
 
+   return unless $c->request->parameters->{'_process_tag'}; 
+
    $formtags = $c->{request}->{parameters}->{tagid};
    
    my %fthash = ();

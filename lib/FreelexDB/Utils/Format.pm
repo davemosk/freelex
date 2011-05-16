@@ -79,6 +79,10 @@ sub fldropdown {
         }
         
         $multiple = $multiple ? ' MULTIPLE SIZE="' . $multiple . '"' : "";
+
+        if ($multiple) {
+           push @result, '<input type="hidden" name="_process_' . $table . '" value="1">';
+        }
         
         push @result, '<select name="' . $valuecol . '"' . $multiple . '>';
         
