@@ -31,7 +31,7 @@ use Encode;
 use Data::Dumper;
 
 sub freelex_entities_init {
-   return if defined(%entitiestoutf);
+   return if %entitiestoutf;
    
 	%entitiestoutf = ( 	'&#257;' => "\x{0101}",
 				'&#256;' => "\x{0100}",
