@@ -12,13 +12,13 @@ mlmessage_init;
 
 sub begin : Private {
   my ( $self, $c ) = @_;
-  unless ($c->user_object ) { 
+  unless ($c->user) { 
      $c->request->action(undef);
      $c->detach("/login/login");
      $c->stash->{dont_render_template} = 1; 
   } else {
      $c->stash->{system_name} = entityise(FreelexDB::Globals->system_name);
-     $c->stash->{user_object} = $c->user_object;
+     $c->stash->{user_object} = $c->user;
   }
 }
 

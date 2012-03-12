@@ -4,6 +4,7 @@ use base qw/Catalyst::Controller/;
 use strict;
 
 use URI::Escape qw(uri_escape_utf8);
+use Data::Dumper;
 
 use FreelexDB::Utils::Mlmessage;
 mlmessage_init;
@@ -17,10 +18,12 @@ sub login : Regex('login$') {
    $c->stash->{template} = 'login.tt';
    $c->stash->{systemname} = FreelexDB::Globals->system_name;
    if ($c->request->params->{username}) {
-      $c->login($c->request->params->{username}, $c->request->params->{password} );
- 
-      if ($c->request->{user}) {
-        #
+#       if ($c->find_user( { matapunauser => $c->request->params->{username} })) {
+      if ( $c->authenticate( { matapunauser => $c->request->params->{username}, password => $c->request->params->{password} } )) {
+
+      die 'OK ...' . Dumper($c->user()->matapunauser);
+
+  #
   # Add a row to the activity journal
   #
         FreelexDB::Activityjournal->insert( {

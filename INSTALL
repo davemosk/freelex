@@ -1,0 +1,13 @@
+CPAN modules necessary to run Freelex:
+
+Catalyst
+Catalyst::Plugin::Authentication::Credential::Password
+Catalyst::Plugin::Authentication::Store::DBIC
+Catalyst::Plugin::Session::Store::FastMmap.pm
+Catalyst::Plugin::Unicode
+Catalyst::Plugin::Redirect
+Catalyst::Plugin::Static::Simple
+Catalyst::View::TT
+Catalyst::View::Download::CSV
+Catalyst::Runtime
+Catalyst::Devel

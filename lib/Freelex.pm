@@ -10,16 +10,53 @@ use warnings;
 # Static::Simple: will serve static files from the application's root 
 # directory
 #
-use Catalyst qw/-Debug Static::Simple Redirect Unicode Session Session::Store::FastMmap Session::State::Cookie Authentication Authentication::Store::DBIC  Authentication::Credential::Password/;
+use Catalyst qw/-Debug Static::Simple Redirect Unicode Session Session::Store::FastMmap Session::State::Cookie Authentication Authentication::Credential::Password/;
+
+use Catalyst::Authentication::Store::DBI::ButMaintained;
 
 our $VERSION = '0.01';
 
 use FreelexDB::Globals;
 
-__PACKAGE__->config->{authentication}->{dbic} = { user_class => 'FreelexDB::Matapunauser',
-                      user_field => 'matapunauser',
-                      password_field => 'password',
-                      password_type => 'clear'   };
+#  __PACKAGE__->config->{'authentication'} = {
+#    'default_realm' => 'default',
+#    'realms' => {
+#      'default' => {
+#        'credential' => {
+#          'class'               => 'Password',
+#          'password_field'      => 'password',
+#          'password_type'       => 'clear'
+#        },
+#        'store' => {
+#          'class'              => 'DBI::ButMaintained',
+#          'user_table'         => 'matapunauser',
+#          'user_key'           => 'matapunauserid',
+#          'user_name'          => 'matapunauser'
+#        },
+#      },
+#    },
+#  };
+
+
+	__PACKAGE__->config->{'authentication'} = {
+		default_realm => 'default'
+		, realms => {
+			default => {
+				credential => {
+					class                 => 'Password'
+					, password_field      => 'password'
+					, password_type       => 'clear'
+				},
+				store => {
+					class                => 'DBI::ButMaintained'
+					, user_table         => 'matapunauser'
+					, user_key           => 'matapunauserid'
+					, user_name          => 'matapunauser'
+				},
+			},
+		},
+	};
+
 
 __PACKAGE__->config->{static}->{ignore_extensions} 
         = [ qw/tmpl tt tt2 xhtml/ ]; # don't ignore html for FCKeditor
