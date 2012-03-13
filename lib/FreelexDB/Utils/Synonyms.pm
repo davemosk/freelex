@@ -205,7 +205,7 @@ sub format_master_form_proto {
 
    my $mmchecked = ($c && $c->{request}->{parameters}->{$makemastername}) ? ' CHECKED' : ''; 
 
-   my $makemasterckbox = $msfamily ? qq(<br><input type="checkbox" name="$makemastername" value="1" $mmchecked>) . '&nbsp;' . entityise(mlmessage('make_me_master_'.$type,$c->user_object->{lang})) : ""; 
+   my $makemasterckbox = $msfamily ? qq(<br><input type="checkbox" name="$makemastername" value="1" $mmchecked>) . '&nbsp;' . entityise(mlmessage('make_me_master_'.$type,$c->user->get('lang'))) : ""; 
 
    return $mstextbox . '<br>' . $msfamily . $makemasterckbox;
 }

@@ -14,13 +14,12 @@ mlmessage_init;
 
 sub begin : Private {
   my ( $self, $c ) = @_;
-  unless ($c->user_object ) { 
+  unless ($c->user) { 
      $c->request->action(undef);
      $c->redirect("login");
      $c->stash->{dont_render_template} = 1; 
   } else {
      $c->stash->{system_name} = entityise(FreelexDB::Globals->system_name);
-     $c->stash->{user_object} = $c->user_object;
      $c->stash->{display_nav} = 1  unless defined $c->request->params->{'_nav'} && $c->request->params->{'_nav'} eq 'no'; 
      $c->stash->{date} = localtime;
   }
@@ -67,7 +66,7 @@ sub search : Path('/search') {
       }
 
       unless ($whereclause) {
-         $c->stash->{message} .= entityise(mlmessage('enter_some_search_criteria',$c->user_object->lang));
+         $c->stash->{message} .= entityise(mlmessage('enter_some_search_criteria',$c->user->get('lang')));
          return 0;
       }
          
@@ -83,7 +82,7 @@ sub search : Path('/search') {
       $c->stash->{message} = "\n<!-- " . $whereclause . "-->\n" ;
       
       if (@rows = Freelex::Model::FreelexDB::Headword->retrieve_from_sql($whereclause)) {
-         $c->stash->{message} .= entityise(mlmessage('your_search_produced_matches',$c->user_object->lang,$c->request->params->{_text},scalar @rows));
+         $c->stash->{message} .= entityise(mlmessage('your_search_produced_matches',$c->user->get('lang'),$c->request->params->{_text},scalar @rows));
                     
          my @hitlist = ();
          foreach my $row (@rows) {
@@ -96,11 +95,11 @@ sub search : Path('/search') {
         $c->stash->{hitlist} = \@hitlist;
      }
      else {
-        $c->stash->{message} .= entityise(mlmessage('your_search_produced_no_matches',$c->user_object->lang,$c->request->params->{_text}));
+        $c->stash->{message} .= entityise(mlmessage('your_search_produced_no_matches',$c->user->get('lang'),$c->request->params->{_text}));
      }
      FreelexDB::Activityjournal->insert( {
        activitydate => $date,
-       matapunauserid => $c->user_object->matapunauserid,
+       matapunauserid => $c->user->get('matapunauserid'),
        verb => 'search',
        object => $c->request->params->{_text},
        description => scalar @rows
@@ -112,7 +111,7 @@ sub search : Path('/search') {
 
 sub searchandreplace : Path('/searchandreplace') {
    my ($self, $c) = @_;
-   my $lang = $c->user_object->lang;
+   my $lang = $c->user->get('lang');
    my $ua = $c->request->headers->{'user-agent'};
    $c->redirect('search')   unless FreelexDB::Globals->enable_search_and_replace;
    if (!$c->request->params->{'_s'}) {
@@ -134,7 +133,7 @@ sub searchandreplace : Path('/searchandreplace') {
 sub end : Private {
    my ( $self, $c ) = @_;
    return  if $c->stash->{'dont_render_template'};
-   $c->stash->{lang} = $c->user_object->lang;     
+   $c->stash->{lang} = $c->user->get('lang');     
    die "You requested a dump"   if ((defined $c->request->params->{'_dump'}) && $c->request->params->{'_dump'} eq 1);
    $c->forward('Freelex::View::TT')  
 }
@@ -143,7 +142,7 @@ sub end : Private {
 sub setup_search_form {
    my ( $self, $c ) = @_;
    
-   my $lang = $c->user_object->lang;
+   my $lang = $c->user->get('lang');
    my $ua = $c->request->headers->{'user-agent'};
    
    my @result = (); 
@@ -202,7 +201,7 @@ sub setup_search_form {
 
 sub setup_search_and_replace_form {
   my ($self, $c) = @_;
-  my $lang = $c->user_object->lang;
+  my $lang = $c->user->get('lang');
   my $ua = $c->request->headers->{'user-agent'};
   $c->stash->{search_prompt} = entityise(mlmessage('search_prompt',$lang));
   $c->stash->{search_text_box} = fltextbox('_text',"");
@@ -219,7 +218,7 @@ sub setup_search_and_replace_form {
 
 sub setup_replace_review_form {
   my ($self, $c) = @_;
-  my $lang = $c->user_object->lang;
+  my $lang = $c->user->get('lang');
   my $ua = $c->request->headers->{'user-agent'};
   $c->stash->{search_prompt} = entityise(mlmessage('search_prompt',$lang));
   $c->stash->{search_text_box} = $c->request->params->{'_text'};
@@ -242,7 +241,7 @@ sub setup_replace_review_form {
   $whereclause .= ' ORDER BY collateseq, headword, variantno, majsense, wordclassid, headwordid';
 
   if (my @rows = Freelex::Model::FreelexDB::Headword->retrieve_from_sql($whereclause)) {
-    $c->stash->{message} .= entityise(mlmessage('your_search_produced_matches',$c->user_object->lang,$c->request->params->{_text},scalar @rows));
+    $c->stash->{message} .= entityise(mlmessage('your_search_produced_matches',$c->user->get('lang'),$c->request->params->{_text},scalar @rows));
               
     my @hitlist = ();
     foreach my $row (@rows) {
@@ -262,7 +261,7 @@ sub setup_replace_review_form {
   $c->stash->{hitlist} = \@hitlist;
   }
   else {
-    $c->stash->{message} .= entityise(mlmessage('your_search_produced_no_matches',$c->user_object->lang,$c->request->params->{_text}));
+    $c->stash->{message} .= entityise(mlmessage('your_search_produced_no_matches',$c->user->get('lang'),$c->request->params->{_text}));
   }
 
 }
@@ -270,7 +269,7 @@ sub setup_replace_review_form {
 sub commit_search_replace {
    my $self = shift;
    my $c = shift;
-   my $lang = $c->user_object->lang;
+   my $lang = $c->user->get('lang');
    my $ua = $c->request->headers->{'user-agent'};
 
    $c->stash->{search_prompt} = entityise(mlmessage('search_prompt',$lang));
@@ -331,18 +330,18 @@ sub commit_search_replace {
       if ($entrychanged) {
         $headword->add_to_editorialcomment( {
                 editorialcommentdate => $c->stash->{date},
-                matapunauserid => $c->user_object->matapunauserid,
+                matapunauserid => $c->user->get('matapunauserid'),
                 editorialcomment => 'Search-and-replace changed "' . $searchtext . '" to "' . $replacetext . '" in ' . join(',', @{$updates->{$p}})
               });
         $headword->set('updatedate',$c->stash->{date});
-        $headword->set('updateuserid',$c->user_object->matapunauserid);
+        $headword->set('updateuserid',$c->user->get('matapunauserid'));
 
         push @hyphenated_changed_entries, $headword->hyphenated;
 
         $headword->update;
         $headword->dbi_commit;
 
-        $c->stash->{archivecopy}->{'archiveuserid'} = $c->user_object->matapunauserid;
+        $c->stash->{archivecopy}->{'archiveuserid'} = $c->user->get('matapunauserid');
         $c->stash->{archivecopy}->{'archivedate'} = $c->stash->{date};
         my $archive = FreelexDB::Hwarchive->insert($c->stash->{archivecopy});
         $archive->dbi_commit;
@@ -356,14 +355,14 @@ sub commit_search_replace {
 
    FreelexDB::Activityjournal->insert( {
        activitydate => $date,
-       matapunauserid => $c->user_object->matapunauserid,
+       matapunauserid => $c->user->get('matapunauserid'),
        verb => 'searchandreplace',
        object => 'headword',
        description => $description
        });
      FreelexDB::Activityjournal->dbi_commit;  
 
-   $c->stash->{num_entries_updated} = entityise(mlmessage('num_entries_updated',$c->user_object->lang,$entrycount));
+   $c->stash->{num_entries_updated} = entityise(mlmessage('num_entries_updated',$c->user->get('lang'),$entrycount));
 
 }
 
@@ -373,7 +372,7 @@ sub setup_search_and_replace_cols {
   $c->stash->{search_and_replace_cols} = []; 
   foreach my $f (@{$cols}) {
     next unless $c->request->params->{$f};
-    push @{$c->stash->{search_and_replace_cols}}, { col =>$f, colname=> entityise(mlmessage($f,$c->user_object->lang),$c->request->headers->{'user-agent'},"form") } ;
+    push @{$c->stash->{search_and_replace_cols}}, { col =>$f, colname=> entityise(mlmessage($f,$c->user->get('lang')),$c->request->headers->{'user-agent'},"form") } ;
   }
 }
 

@@ -37,7 +37,7 @@
 </html>
 
 [% BLOCK submit_buttons %]
-[% IF user_object.canupdate %]
+[% IF c.user.get('canupdate') %]
 <tr><td></td><td></td><td>
 [% IF NOT cloning %]
 <input type="submit" value="save">

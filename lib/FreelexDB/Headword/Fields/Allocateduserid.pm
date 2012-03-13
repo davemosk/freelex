@@ -36,13 +36,13 @@ sub pre_update_allocateduserid {
   }
   # return it to "the pool" if:
   #  - we're sending it to ourselves
-  if ($self->allocateduserid eq $c->user_object->matapunauserid)  {
+  if ($self->allocateduserid eq $c->user->get('matapunauserid'))  {
      $self->set("allocateduserid",undef);
      $self->set("sentbyuserid",undef);
      $self->set("workqueueposition",undef);
   }
   else {
-     $self->set("sentbyuserid",$c->user_object->matapunauserid);
+     $self->set("sentbyuserid",$c->user->get('matapunauserid'));
      $self->set("workqueueposition",1);
   }
 }

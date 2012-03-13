@@ -16,19 +16,18 @@ use URI::Escape qw(uri_escape_utf8);
 
 sub begin : Private {
   my ( $self, $c ) = @_;
-  unless ($c->user_object ) { 
+  unless ($c->user) { 
      $c->request->action(undef);
      $c->redirect("../login");
      $c->stash->{dont_render_template} = 1; 
   } else {
      $c->stash->{system_name} = entityise(FreelexDB::Globals->system_name);
-     $c->stash->{user_object} = $c->user_object;
      $c->stash->{display_nav} = 1  unless defined $c->request->params->{'_nav'} && $c->request->params->{'_nav'} eq 'no';
      $c->stash->{fckpath} = FreelexDB::Globals->fckeditor_path;  
      $c->stash->{jqpath} = FreelexDB::Globals->jquery_path;
      $c->stash->{date} = localtime;
      $c->stash->{workflow} = $c->request->params->{'_wf'} || 0;
-     $c->stash->{wf_next_entry} = entityise(mlmessage('wf_next_entry',$c->user_object->{lang}));
+     $c->stash->{wf_next_entry} = entityise(mlmessage('wf_next_entry',$c->user->get('lang')));
      $c->stash->{enable_delete_button_data_entry} = FreelexDB::Globals->enable_delete_button_data_entry;
   }
 }
@@ -47,17 +46,17 @@ sub display : Path('display') {
   $c->stash->{clonable} = 0;
   if ($id ne 'new' && defined FreelexDB::Globals->enable_cloning && FreelexDB::Globals->enable_cloning) {
      $c->stash->{clonable} = 1;
-     $c->stash->{clone} = xlateit('__mlmsg_clone__',$c->user_object->lang,$c->request->headers->{'user-agent'});
+     $c->stash->{clone} = xlateit('__mlmsg_clone__',$c->user->get('lang'),$c->request->headers->{'user-agent'});
   }
 
   if ($id ne 'new') {
      $h = Freelex::Model::FreelexDB::Headword->retrieve($id);
-     $c->stash->{title} = mlmessage('edit_headword',$c->user_object->lang,$c->request->headers->{'user-agent'}) . entityise($h->hyphenated);  
+     $c->stash->{title} = mlmessage('edit_headword',$c->user->get('lang'),$c->request->headers->{'user-agent'}) . entityise($h->hyphenated);  
      $c->stash->{archivecopy} = $h->rowtohashref;
      #
      # set up history link
      #
-     $c->stash->{history} = entityise(mlmessage('history',$c->user_object->lang),$c->request->headers->{'user-agent'});
+     $c->stash->{history} = entityise(mlmessage('history',$c->user->get('lang')),$c->request->headers->{'user-agent'});
 
   } 
   elsif (my $writefailmsg = FreelexDB::Headword->no_write_access($c)) {
@@ -84,7 +83,7 @@ sub display : Path('display') {
 
   unless ($id eq 'new') {
      foreach my $col (@{FreelexDB::Headword->display_order_print}) {  
-        $c->stash->{thispretty}->{$col} = entityise(mlmessage_block($h->format(trim($col),"plain"),$c->user_object->lang));
+        $c->stash->{thispretty}->{$col} = entityise(mlmessage_block($h->format(trim($col),"plain"),$c->user->get('lang')));
      }
      $c->stash->{thispretty}->{_variantno} = $h->variantno   if ((defined $h->variantno) && $h->variantno);
      $c->stash->{thispretty}->{_majsense} = $h->majsense   if ((defined $h->majsense) && $h->majsense);
@@ -99,7 +98,7 @@ sub commit : Path('commit') {
   my ( $self, $c ) = @_;
   my $id = $c->request->params->{'_id'} || die "no id supplied";
   $c->stash->{id} = $id;
-  $c->stash->{matapunauserid} =  $c->user_object->matapunauserid;
+  $c->stash->{matapunauserid} =  $c->user->get('matapunauserid');
   if ($c->request->params->{_delete}) { $c->detach('/headword/del') }
   my $ignore_warnings = $c->request->params->{'_ignorewarn'} || 0;
   
@@ -110,7 +109,7 @@ sub commit : Path('commit') {
   $c->stash->{clonable} = 0;
   if ($id ne 'new' && defined FreelexDB::Globals->enable_cloning && FreelexDB::Globals->enable_cloning) {
      $c->stash->{clonable} = 1;
-     $c->stash->{clone} = xlateit('__mlmsg_clone__',$c->user_object->lang,$c->request->headers->{'user-agent'});
+     $c->stash->{clone} = xlateit('__mlmsg_clone__',$c->user->get('lang'),$c->request->headers->{'user-agent'});
   }
 
   if ($c->stash->{cloning}) {  
@@ -129,7 +128,7 @@ sub commit : Path('commit') {
      #
      # set up history link
      #
-     $c->stash->{history} = entityise(mlmessage('history',$c->user_object->lang),$c->request->headers->{'user-agent'});
+     $c->stash->{history} = entityise(mlmessage('history',$c->user->get('lang')),$c->request->headers->{'user-agent'});
   }
   if (my $writefailmsg = $h->no_write_access($c)) {
      $c->stash->{message} = entityise($writefailmsg,$c->request->headers->{'user-agent'});
@@ -188,8 +187,8 @@ sub commit : Path('commit') {
      if ($c->stash->{have_warnings}) {
         $c->stash->{sensestr} = makesensestr($h);
         $h->discard_changes;
-        $c->stash->{message} = xlateit('__mlmsg_not_saved_warnings__',$c->user_object->lang,$c->request->headers->{'user-agent'});
-        $c->stash->{ignore_warnings_message} = xlateit('__mlmsg_ignore_warnings__',$c->user_object->lang,$c->request->headers->{'user-agent'});
+        $c->stash->{message} = xlateit('__mlmsg_not_saved_warnings__',$c->user->get('lang'),$c->request->headers->{'user-agent'});
+        $c->stash->{ignore_warnings_message} = xlateit('__mlmsg_ignore_warnings__',$c->user->get('lang'),$c->request->headers->{'user-agent'});
         $c->stash->{template} = 'addedit.tt';
         makeprettyarray($c);
         return;
@@ -201,7 +200,7 @@ sub commit : Path('commit') {
   # archive the copy
   #
   
-  $c->stash->{archivecopy}->{'archiveuserid'} = $c->user_object->matapunauserid;
+  $c->stash->{archivecopy}->{'archiveuserid'} = $c->user->get('matapunauserid');
   $c->stash->{archivecopy}->{'archivedate'} = $c->stash->{date};
   my $archive = FreelexDB::Hwarchive->insert($c->stash->{archivecopy});
   
@@ -305,26 +304,26 @@ sub del : Path('delete')  {
      my $date = localtime;
      $c->stash->{archivecopy} = $h->rowtohashref;
      $c->stash->{archivecopy}->{archivedate} = $date;
-     $c->stash->{archivecopy}->{archiveuserid} = $c->user_object->{matapunauserid};
+     $c->stash->{archivecopy}->{archiveuserid} = $c->user->get('matapunauserid');
      my $arc = FreelexDB::Hwarchive->insert($c->stash->{archivecopy});
      FreelexDB::Activityjournal->insert( {
         activitydate => $date,
-        matapunauserid => $c->user_object->{matapunauserid},
+        matapunauserid => $c->user->get('matapunauserid'),
         verb => 'delete',
         object => 'headword',
         description => $h->hyphenated
      });
      $h->delete;
      $arc->dbi_commit;
-     $c->stash->{message} = entityise(mlmessage('entry_deleted',$c->user_object->lang),$c->request->headers->{'user-agent'});
+     $c->stash->{message} = entityise(mlmessage('entry_deleted',$c->user->get('lang')),$c->request->headers->{'user-agent'});
      $c->stash->{dont_render_template} = 1;
      $c->redirect('../freelex');
      return 0;
    }
    else {
-      $c->stash->{message} = entityise(mlmessage('delete_confirm',$c->user_object->lang,$h->hyphenated),$c->request->headers->{'user-agent'});
-      $c->stash->{confirm} = entityise(mlmessage('confirm_delete',$c->user_object->lang),$c->request->headers->{'user-agent'});
-      $c->stash->{abandon} = entityise(mlmessage('dont_delete',$c->user_object->lang),$c->request->headers->{'user-agent'});
+      $c->stash->{message} = entityise(mlmessage('delete_confirm',$c->user->get('lang'),$h->hyphenated),$c->request->headers->{'user-agent'});
+      $c->stash->{confirm} = entityise(mlmessage('confirm_delete',$c->user->get('lang')),$c->request->headers->{'user-agent'});
+      $c->stash->{abandon} = entityise(mlmessage('dont_delete',$c->user->get('lang')),$c->request->headers->{'user-agent'});
       my $rowresults = {};
       foreach my $col (@{Freelex::Model::FreelexDB::Headword->search_result_cols}) {
          $rowresults->{$col} = $h->format($col,"html");
@@ -371,7 +370,7 @@ sub history : Path('history') {
         my $val = FreelexDB::Headword->format($row,$col,"plain");
         $val =~ s/^<p>//;
         $curr->{$col} = $val;
-        $rowr = entityise(mlmessage_block($val,$c->user_object->lang))   if $val;
+        $rowr = entityise(mlmessage_block($val,$c->user->get('lang')))   if $val;
         if ((!exists $curr->{$col} || !defined $curr->{$col} || !$curr->{$col}) && exists $prev->{$col} && defined $prev->{$col} && $prev->{$col}) {
            $rowr = '<font color="red">[deleted]</font>';
         }
@@ -379,7 +378,7 @@ sub history : Path('history') {
            $rowr = '<font color="red">' . $rowr . '</font>'   unless $i == 1;
         }
         
-        push @rowresult, { label => entityise(mlmessage(lc($col),$c->user_object->lang)), 
+        push @rowresult, { label => entityise(mlmessage(lc($col),$c->user->get('lang'))), 
         value => $rowr }   if $rowr; 
      }
  #            die Dumper(@rowresult)  if $i == 4;
@@ -396,7 +395,7 @@ sub history : Path('history') {
  
    FreelexDB::Activityjournal->insert( {
               activitydate => $c->stash->{date},
-              matapunauserid => $c->user_object->matapunauserid,
+              matapunauserid => $c->user->get('matapunauserid'),
               verb => 'history',
               object => $hwrow->hyphenated,
               description => $i
@@ -411,7 +410,7 @@ sub myediting : Path('myediting') {
    my( $self, $c ) = @_;
    if ( FreelexDB::Headword->can('workflow_list_cols') ) {
       my $wfitems = [];
-      my @wfhits = FreelexDB::Headword->sth_to_objects(FreelexDB::Headword->sql_all_wf($c->user_object->{matapunauserid}));
+      my @wfhits = FreelexDB::Headword->sth_to_objects(FreelexDB::Headword->sql_all_wf($c->user->get('matapunauserid')));
       unless (@wfhits) {
         $c->stash->{dont_render_template} = 1; 
 	my $finished_redirect = '../freelex?_message=' . uri_escape_utf8(mlmessage('no_more_work_today'));
@@ -443,9 +442,9 @@ sub end : Private {
    unless ($c->stash->{'dont_render_template'}) {
       $c->stash->{fieldnamexlated} = {};  
       foreach my $f (keys %{$c->stash->{fields}}) {
-         $c->stash->{fieldnamexlated}->{$f} = entityise(mlmessage(lc($f),$c->user_object->lang),$c->request->headers->{'user-agent'});
-         $c->stash->{fields}->{$f} = xlateit($c->stash->{fields}->{$f},$c->user_object->lang,$c->request->headers->{'user-agent'},"form"); 
-         $c->stash->{warnings}->{$f} = xlateit($c->stash->{warnings}->{$f},$c->user_object->lang,$c->request->headers->{'user-agent'}); 
+         $c->stash->{fieldnamexlated}->{$f} = entityise(mlmessage(lc($f),$c->user->get('lang')),$c->request->headers->{'user-agent'});
+         $c->stash->{fields}->{$f} = xlateit($c->stash->{fields}->{$f},$c->user->get('lang'),$c->request->headers->{'user-agent'},"form"); 
+         $c->stash->{warnings}->{$f} = xlateit($c->stash->{warnings}->{$f},$c->user->get('lang'),$c->request->headers->{'user-agent'}); 
       }      
       $c->forward('Freelex::View::TT')   
    }
@@ -546,7 +545,7 @@ sub getnextwfid {
 # get the headwordid of the next entry to edit in our QA workflow
 #
 	my $c = shift;
-	my $u = $c->user_object->{matapunauserid};
+	my $u = $c->user->get('matapunauserid');
         return FreelexDB::Headword->sql_next_wf($u)->select_val;        
 }
 

@@ -177,11 +177,11 @@ sub rowtohashref {
 
 sub canupdate {
    my $self = shift;
-   my $user_object = shift;
+   my $user = shift;
    
-   return 0 unless $user_object->canupdate;
-   return 1 if $self->owneruserid = $user_object->matapunauserid;
-   return 1 if $user_object->editor;
+   return 0 unless $user->get('canupdate');
+   return 1 if $self->owneruserid = $user->get('matapunauserid');
+   return 1 if $user->get('editor');
    return 0;  
 }
    
@@ -190,14 +190,14 @@ sub no_write_access {
      my $self = shift;
      my $c = shift;
      my $message = "";
-     return 0 if $c->user_object->sysadmin;
-     if (!$c->user_object->canupdate) {
-       $message = mlmessage('no_write_access',$c->user_object->lang);
+     return 0 if $c->user->get('sysadmin');
+     if (!$c->user->get('canupdate')) {
+       $message = mlmessage('no_write_access',$c->user->get('lang'));
        return $message;
      }
      return 0 unless ($self && ref $self && $self->lifecycleid);
      if ($self->lifecycleid == FreelexDB::Globals->lifecycle_complete) {
-       $message =  mlmessage('cant_update_lifecycle_complete',$c->user_object->lang);
+       $message =  mlmessage('cant_update_lifecycle_complete',$c->user->get('lang'));
        return $message;
      }
      return 0;

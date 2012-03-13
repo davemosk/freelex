@@ -10,7 +10,7 @@ sub format_qastatus1_plain {
 sub format_qastatus1_form {
    my $self = shift;
    my $c = shift;
-   my $userqalevel = $c->user_object->qalevel || 0;
+   my $userqalevel = $c->user->get('qalevel') || 0;
    my $field = getfieldnamefromformatsub();
    my $dd;
    
@@ -36,4 +36,3 @@ sub format_qastatus1_form {
    
      
       
-         

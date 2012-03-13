@@ -17,22 +17,21 @@ use URI::Escape qw(uri_escape_utf8);
 
 sub begin : Private {
   my ( $self, $c ) = @_;
-  unless ($c->user_object ) { 
+  unless ($c->user) { 
      $c->request->action(undef);
      $c->redirect("../login");
      $c->stash->{dont_render_template} = 1; 
   } else {
      $c->stash->{system_name} = entityise(FreelexDB::Globals->system_name);
-     $c->stash->{user_object} = $c->user_object;
      $c->stash->{display_nav} = 1  unless defined $c->request->params->{'_nav'} && $c->request->params->{'_nav'} eq 'no';
-     $c->stash->{start_prompt} = entityise(mlmessage('print_start_prompt',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
-     $c->stash->{end_prompt} = entityise(mlmessage('print_end_prompt',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
+     $c->stash->{start_prompt} = entityise(mlmessage('print_start_prompt',$c->user->get('lang')),$c->request->headers->{'user-agent'});
+     $c->stash->{end_prompt} = entityise(mlmessage('print_end_prompt',$c->user->get('lang')),$c->request->headers->{'user-agent'});
      $c->stash->{format_prompt} =
-     entityise(mlmessage('format',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
-     $c->stash->{print_prompt} = entityise(mlmessage('print',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
-     $c->stash->{tag_prompt} = entityise(mlmessage('headwordtags',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
-     $c->stash->{category_prompt} = entityise(mlmessage('category',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
-     $c->stash->{print_qa_only_prompt} = entityise(mlmessage('print_qa_only',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
+     entityise(mlmessage('format',$c->user->get('lang')),$c->request->headers->{'user-agent'});
+     $c->stash->{print_prompt} = entityise(mlmessage('print',$c->user->get('lang')),$c->request->headers->{'user-agent'});
+     $c->stash->{tag_prompt} = entityise(mlmessage('headwordtags',$c->user->get('lang')),$c->request->headers->{'user-agent'});
+     $c->stash->{category_prompt} = entityise(mlmessage('category',$c->user->get('lang')),$c->request->headers->{'user-agent'});
+     $c->stash->{print_qa_only_prompt} = entityise(mlmessage('print_qa_only',$c->user->get('lang')),$c->request->headers->{'user-agent'});
      $c->stash->{date} = localtime;
      $c->stash->{print_enable_xref} = FreelexDB::Globals->print_enable_xref || 0;
      $c->stash->{wordclass_join_char} = FreelexDB::Globals->wordclass_join_char;
@@ -55,12 +54,12 @@ sub detail : Path('detail') {
      
      if (FreelexDB::Globals->enable_tags) {
        my $tagdefault = $c->request->params->{tagid} || 'dropdown-first';
-       $c->stash->{tagbox} =  xlateit(fldropdown('tag','tagid','tag',$tagdefault,undef,5),$c->user_object->{'lang'},$c->request->headers->{'user-agent'},"form");
+       $c->stash->{tagbox} =  xlateit(fldropdown('tag','tagid','tag',$tagdefault,undef,5),$c->user->get('lang'),$c->request->headers->{'user-agent'},"form");
      }
      
      if (FreelexDB::Globals->enable_categories) {
        my $catdefault = $c->request->params->{categoryid} || 'dropdown-first';
-       $c->stash->{categorybox} =  xlateit(fldropdown('category','categoryid','category',$catdefault,'__mlmsg_any_category__'),$c->user_object->{'lang'},$c->request->headers->{'user-agent'},"form");
+       $c->stash->{categorybox} =  xlateit(fldropdown('category','categoryid','category',$catdefault,'__mlmsg_any_category__'),$c->user->get('lang'),$c->request->headers->{'user-agent'},"form");
      }
 
      if (FreelexDB::Globals->can('print_qa_test') && FreelexDB::Globals->print_qa_test ) {
@@ -195,7 +194,7 @@ sub detail : Path('detail') {
          
            FreelexDB::Activityjournal->insert( {
               activitydate => $c->stash->{date},
-              matapunauserid => $c->user_object->matapunauserid,
+              matapunauserid => $c->user->get('matapunauserid'),
               verb => 'print',
               object => 'detail',
               description => $start . ' - ' . $end
@@ -256,7 +255,7 @@ sub detail : Path('detail') {
          
          FreelexDB::Activityjournal->insert( {
               activitydate => $c->stash->{date},
-              matapunauserid => $c->user_object->matapunauserid,
+              matapunauserid => $c->user->get('matapunauserid'),
               verb => 'print',
               object => 'xref',
               description => $start . ' - ' . $end
@@ -277,7 +276,7 @@ sub end : Private {
 sub bail {
    my $c = shift;
    my $m = shift;
-   $c->stash->{'message'} = mlmessage_block($m,$c->user_object->{lang});
+   $c->stash->{'message'} = mlmessage_block($m,$c->user->get('lang'));
    $c->stash->{template} = 'printdetailreqform.tt';
    $c->forward('Freelex::View::TT');
    return 0;

@@ -21,16 +21,14 @@ sub login : Regex('login$') {
 #       if ($c->find_user( { matapunauser => $c->request->params->{username} })) {
       if ( $c->authenticate( { matapunauser => $c->request->params->{username}, password => $c->request->params->{password} } )) {
 
-      die 'OK ...' . Dumper($c->user()->matapunauser);
-
   #
   # Add a row to the activity journal
   #
         FreelexDB::Activityjournal->insert( {
            activitydate => $date,
-           matapunauserid => $c->user_object->matapunauserid,
+           matapunauserid => $c->user->get('matapunauserid'),
            verb => 'login',
-           object => $c->user_object->matapunauserfullname,
+           object => $c->user->get('matapunauserfullname'),
            description => $c->request->headers->as_string
            });
            FreelexDB::Activityjournal->dbi_commit;  
@@ -61,7 +59,7 @@ sub logout : Regex('logout$') {
    $c->stash->{message} = 'See ya later';
    FreelexDB::Activityjournal->insert( {
       activitydate => $date,
-      matapunauserid => $c->user_object->matapunauserid,
+      matapunauserid => $c->user->get('matapunauserid'),
       verb => 'logout',
       object => '',
       description => ''

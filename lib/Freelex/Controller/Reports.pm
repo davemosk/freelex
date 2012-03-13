@@ -16,20 +16,19 @@ use URI::Escape qw(uri_escape_utf8);
 
 sub begin : Private {
   my ( $self, $c ) = @_;
-  unless ($c->user_object ) { 
+  unless ($c->user) { 
      $c->request->action(undef);
      $c->redirect("../login");
      $c->stash->{dont_render_template} = 1; 
   } else {
      $c->stash->{system_name} = entityise(FreelexDB::Globals->system_name);
-     $c->stash->{user_object} = $c->user_object;
      $c->stash->{display_nav} = 1  unless defined $c->request->params->{'_nav'} && $c->request->params->{'_nav'} eq 'no';
-     $c->stash->{start_prompt} = entityise(mlmessage('print_start_prompt',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
-     $c->stash->{end_prompt} = entityise(mlmessage('print_end_prompt',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
+     $c->stash->{start_prompt} = entityise(mlmessage('print_start_prompt',$c->user->get('lang')),$c->request->headers->{'user-agent'});
+     $c->stash->{end_prompt} = entityise(mlmessage('print_end_prompt',$c->user->get('lang')),$c->request->headers->{'user-agent'});
      $c->stash->{format_prompt} =
-     entityise(mlmessage('format',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
-     $c->stash->{print_prompt} = entityise(mlmessage('print',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
-     $c->stash->{tag_prompt} = entityise(mlmessage('headwordtags',$c->user_object->{'lang'}),$c->request->headers->{'user-agent'});
+     entityise(mlmessage('format',$c->user->get('lang')),$c->request->headers->{'user-agent'});
+     $c->stash->{print_prompt} = entityise(mlmessage('print',$c->user->get('lang')),$c->request->headers->{'user-agent'});
+     $c->stash->{tag_prompt} = entityise(mlmessage('headwordtags',$c->user->get('lang')),$c->request->headers->{'user-agent'});
      $c->stash->{date} = localtime;
      $c->stash->{reports_dir} = FreelexDB::Globals->reports_dir;
      
@@ -44,7 +43,7 @@ sub sql : Path('sql') {
    my $report;
    my $format = (defined $c->request->params->{"_format"} && $c->request->params->{"_format"} && $c->request->params->{"_format"} eq 'csv') ? "csv" : "html";
 
-   $c->stash->{title} = mlmessage('report',$c->user_object->{'lang'});
+   $c->stash->{title} = mlmessage('report',$c->user->get('lang'));
 
    if ($report = $c->request->params->{"_report"}) {
       FreelexDB::Activityjournal->dbi_commit;
@@ -56,7 +55,7 @@ sub sql : Path('sql') {
       $sth->execute  || bail($c,$dbh,$sql . '<br>execute<br>returned the following error:<br><br>' . $dbh->errstr);
       FreelexDB::Activityjournal->dbi_commit;
       my @rows = ();
-      my $title = entityise(mlmessage($report,$c->user_object->{'lang'}));
+      my $title = entityise(mlmessage($report,$c->user->get('lang')));
 
 
       my $count = 0;
@@ -67,7 +66,7 @@ sub sql : Path('sql') {
          while (my $csvr = $sth->fetchrow_arrayref) {
             my @csvrow = ();
             foreach my $csvc (@$csvr) {
-               push @csvrow, mlmessage_block($csvc,$c->user_object->{lang});
+               push @csvrow, mlmessage_block($csvc,$c->user->get('lang'));
             }
             push @csvdata, \@csvrow;
          }
@@ -104,7 +103,7 @@ sub sql : Path('sql') {
       
       FreelexDB::Activityjournal->insert( {
               activitydate => $c->stash->{date},
-              matapunauserid => $c->user_object->matapunauserid,
+              matapunauserid => $c->user->get('matapunauserid'),
               verb => 'reports',
               object => $report,
               description => $count
@@ -121,17 +120,17 @@ sub sql : Path('sql') {
    @repfiles = grep {s/.sql//} @repfiles;
 
    push @result, qq(<form action="../reports/sql" method="post">);
-   push @result, mlmessage('please_select_a_report',$c->user_object->{'lang'}) . '<br>';
+   push @result, mlmessage('please_select_a_report',$c->user->get('lang')) . '<br>';
    push @result, qq(<select name="_report">\n);
    foreach my $repfile (@repfiles) {
-      push @result, qq(<option value=") . $repfile . qq(">) . mlmessage($repfile,$c->user_object->{'lang'}) . qq(</option>);
+      push @result, qq(<option value=") . $repfile . qq(">) . mlmessage($repfile,$c->user->get('lang')) . qq(</option>);
    }
    push @result, qq(</select><br>);
-   push @result, mlmessage('format',$c->user_object->{'lang'}) . qq(:&nbsp;<input name="_format" type="radio" value="html" checked>HTML&nbsp;&nbsp;&nbsp;&nbsp;<input name="_format" type="radio" value="csv">CSV<br>);
+   push @result, mlmessage('format',$c->user->get('lang')) . qq(:&nbsp;<input name="_format" type="radio" value="html" checked>HTML&nbsp;&nbsp;&nbsp;&nbsp;<input name="_format" type="radio" value="csv">CSV<br>);
    push @result, qq(<input type="hidden" name="_func" value="reports">);
-   push @result, qq(<input type="submit" name="generate_report" value=") . mlmessage('generate_report',$c->user_object->{lang}) . qq(">);
+   push @result, qq(<input type="submit" name="generate_report" value=") . mlmessage('generate_report',$c->user->get('lang')) . qq(">);
    push @result, qq(</form>);
-   $c->stash->{results} = mlmessage_block(join("",@result),$c->user_object->{lang});
+   $c->stash->{results} = mlmessage_block(join("",@result),$c->user->get('lang'));
    $c->stash->{template} = 'reports.tt';
    $c->detach('Freelex::View::TT')
     
@@ -147,7 +146,7 @@ sub bail {
    my $dbh = shift;
    my $m = shift;
    if ($dbh) { eval { $dbh->disconnect() } };
-   $c->stash->{'message'} = mlmessage_block($m,$c->user_object->{lang});
+   $c->stash->{'message'} = mlmessage_block($m,$c->user->get('lang'));
    $c->stash->{template} = 'reports.tt';
    $c->forward('Freelex::View::TT');
    return 0;
