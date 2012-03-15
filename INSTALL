@@ -1,13 +1,20 @@
 CPAN modules necessary to run Freelex:
 
+Moose
 Catalyst
 Catalyst::Plugin::Authentication::Credential::Password
-Catalyst::Plugin::Authentication::Store::DBIC
+Catalyst::Plugin::Authentication::Store::DBI::ButMaintained
 Catalyst::Plugin::Session::Store::FastMmap.pm
 Catalyst::Plugin::Unicode
 Catalyst::Plugin::Redirect
 Catalyst::Plugin::Static::Simple
+Catalyst::Plugin::StackTrace
 Catalyst::View::TT
 Catalyst::View::Download::CSV
 Catalyst::Runtime
 Catalyst::Devel
+Class::DBI::Pg
+
+libexpat1-dev
+libpq-dev
+

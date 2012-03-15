@@ -18,26 +18,6 @@ our $VERSION = '0.01';
 
 use FreelexDB::Globals;
 
-#  __PACKAGE__->config->{'authentication'} = {
-#    'default_realm' => 'default',
-#    'realms' => {
-#      'default' => {
-#        'credential' => {
-#          'class'               => 'Password',
-#          'password_field'      => 'password',
-#          'password_type'       => 'clear'
-#        },
-#        'store' => {
-#          'class'              => 'DBI::ButMaintained',
-#          'user_table'         => 'matapunauser',
-#          'user_key'           => 'matapunauserid',
-#          'user_name'          => 'matapunauser'
-#        },
-#      },
-#    },
-#  };
-
-
 	__PACKAGE__->config->{'authentication'} = {
 		default_realm => 'default'
 		, realms => {
@@ -108,31 +88,6 @@ Catalyst based application.
 =head2 default
 
 =cut
-
-#
-# Output a friendly welcome message
-#
-sub default : Private {
-    my ( $self, $c ) = @_;
-
-    # Hello World
-    $c->response->body( "Sorry, we can't service your request." );
-    $c->response->status(404);
-}
-
-#
-# Uncomment and modify this end action after adding a View component
-#
-#=head2 end
-#
-#=cut
-#
-#sub end : Private {
-#    my ( $self, $c ) = @_;
-#
-#    # Forward to View unless response body is already defined
-#    $c->forward( $c->view('') ) unless $c->response->body;
-#}
 
 =head1 AUTHOR
 
