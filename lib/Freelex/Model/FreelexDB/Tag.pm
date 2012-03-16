@@ -1,4 +1,4 @@
-package Freelex::Model::FreelexDB::Headwordtag;
+package Freelex::Model::FreelexDB::Tag;
 
 use base qw/FreelexDB::Tag/;
 

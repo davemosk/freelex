@@ -1,5 +1,5 @@
-package Freelex::Model::FreelexDB::Category;
+package Freelex::Model::FreelexDB::Domain;
 
-use base qw/FreelexDB::Category/;
+use base qw/FreelexDB::Domain/;
 
 1;
