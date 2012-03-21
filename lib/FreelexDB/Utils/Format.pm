@@ -84,7 +84,9 @@ sub fldropdown {
            push @result, '<input type="hidden" name="_process_' . $table . '" value="1">';
         }
         
-        push @result, '<select name="' . $valuecol . '"' . $multiple . '>';
+        my $title = '__mlmsg_select__ __mlmsg_' . $valuecol . '__';
+
+        push @result, '<select name="' . $valuecol . '"' . $multiple . ' id="' . $valuecol . '" title="' . $title . '">';
         
         foreach my $label (sort { lc $a cmp lc $b } keys %ddvalues) {
            my $selected = "";
