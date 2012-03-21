@@ -6,19 +6,24 @@ use strict;
     __PACKAGE__->config( namespace => '');
 
 
-sub auto : Private {
-     my ( $self, $c ) = @_;
-     if ($c->request->address =~ /^127\.0\./ || $c->request->headers->{"x-forwarded-server"} =~ /^127\.0\./ ) {
-         return 1;
-     }
-     else {
-         $c->response->status( 404 );
-         $c->stash->{template} = '404.tt';
-         $c->response->headers->header( 'X-Catalyst' => undef );
-         $c->detach('Freelex::View::TT');
-         return 0;
-      }
-}
+#
+# Security - block access from an external source to our application server
+# disabled for now due to complicated DNS issues
+#
+
+#sub auto : Private {
+#     my ( $self, $c ) = @_;
+#     if ($c->request->address =~ /^127\.0\./ || $c->request->headers->{"x-forwarded-server"} =~ /^127\.0\./ ) {
+#         return 1;
+#     }
+#     else {
+#         $c->response->status( 404 );
+#         $c->stash->{template} = '404.tt';
+#         $c->response->headers->header( 'X-Catalyst' => undef );
+#         $c->detach('Freelex::View::TT');
+#         return 0;
+#      }
+#}
 
 
 sub default : Private {
